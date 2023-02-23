@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/liushuangls/go-server-template/internal/data"
-	entSchema "github.com/liushuangls/go-server-template/internal/data/ent"
+	"github.com/liushuangls/go-server-template/internal/data/ent"
 	"github.com/liushuangls/go-server-template/internal/dto/request"
 	"github.com/liushuangls/go-server-template/internal/dto/response"
 	"github.com/liushuangls/go-server-template/pkg/ecode"
@@ -24,7 +24,7 @@ func NewUserService(log *zap.SugaredLogger, jwt *jwt.JWT, userRepo *data.UserRep
 	return &UserService{log: log, jwt: jwt, userRepo: userRepo}
 }
 
-func (u *UserService) getJwtToken(user *entSchema.User) (*jwt.Token, error) {
+func (u *UserService) getJwtToken(user *ent.User) (*jwt.Token, error) {
 	return u.jwt.GenerateToken(jwt.ClaimsParam{UserID: user.ID}, time.Hour*24*90)
 }
 

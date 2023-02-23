@@ -1,6 +1,8 @@
 package common
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/liushuangls/go-server-template/pkg/ecode"
 	"go.uber.org/zap"
@@ -16,35 +18,44 @@ func SetRespLog(logger *zap.SugaredLogger) {
 
 type Resp struct {
 	Code    int    `json:"code"`
-	Message string `json:"message"`
+	Message string `json:"msg"`
 	Data    any    `json:"data"`
 }
 
-func ErrorResp(c *gin.Context, err error) {
-	e := ecode.FromError(err)
-	msg := e.Message
-	if e.Code == ecode.UnknownCode {
-		log.Errorf("ErrorResp receive unknown error: %s", err)
-		msg = "Internal Server Error"
+func NewResp(data interface{}, err error) (int, *Resp) {
+	var (
+		code     = 0
+		msg      = ""
+		httpCode = http.StatusOK
+	)
+	ec := ecode.FromError(err)
+	if ec != nil {
+		code = ec.Code
+		msg = ec.Message
+		httpCode = ec.HttpCode
 	}
-	c.JSON(e.HttpCode, Resp{
-		Code:    e.Code,
+	if code == ecode.UnknownCode {
+		msg = "Internal Server Error"
+		log.Errorf("NewResp receive unknown error: %s", ec)
+	}
+	return httpCode, &Resp{
+		Code:    code,
 		Message: msg,
-		Data:    nil,
-	})
+		Data:    data,
+	}
+}
+
+func ErrorResp(c *gin.Context, err error) {
+	c.JSON(NewResp(nil, err))
 	c.Abort()
 }
 
 func ParamsErrorResp(c *gin.Context, err error) {
-	ErrorResp(c, ecode.NewInvalidParamsErr(err.Error()))
+	ErrorResp(c, ecode.NewInvalidParamsErr(translateErr(err)))
 }
 
 func SuccessResp(c *gin.Context, data any) {
-	c.JSON(200, Resp{
-		Code:    0,
-		Message: "",
-		Data:    data,
-	})
+	c.JSON(NewResp(data, nil))
 }
 
 func WrapResp(c *gin.Context) func(data any, err error) {
