@@ -1,0 +1,28 @@
+App:
+  Addr: ":8082"
+  Mode: release
+
+DB:
+  Dialect: mysql
+  DSN: user:passwd@tcp(127.0.0.1:3306)/database?charset=utf8mb4&parseTime=True&loc=Local
+  MaxIdle: 5
+  MaxActive: 10
+  MaxLifetime: 3600
+  AutoMigrate: true
+
+Redis:
+  Addr: 127.0.0.1:6379
+  DB: 0
+  Password: ""
+
+Log:
+  FileDir: log
+  MaxSize: 1
+  MaxBackups: 5
+  MaxAge: 30
+  Compress: false
+  LocalTime: false
+
+Jwt:
+  Secret: "secret_122"
+  Issuer: "test.com"
