@@ -3,7 +3,7 @@ package data
 import (
 	"context"
 
-	entSchema "github.com/liushuangls/go-server-template/internal/data/ent"
+	"github.com/liushuangls/go-server-template/internal/data/ent"
 	"github.com/liushuangls/go-server-template/internal/data/ent/predicate"
 	userSchema "github.com/liushuangls/go-server-template/internal/data/ent/user"
 	"github.com/liushuangls/go-server-template/pkg/ecode"
@@ -17,13 +17,13 @@ func NewUserRepo(data *Data) *UserRepo {
 	return &UserRepo{data}
 }
 
-func (u *UserRepo) findOne(ctx context.Context, wheres ...predicate.User) (*entSchema.User, error) {
+func (u *UserRepo) findOne(ctx context.Context, wheres ...predicate.User) (*ent.User, error) {
 	user, err := u.db.User.Query().
 		Where(wheres...).
 		Where(userSchema.DeleteTimeIsNil()).
 		First(ctx)
 	if err != nil {
-		if entSchema.IsNotFound(err) {
+		if ent.IsNotFound(err) {
 			return nil, ecode.NotFound
 		}
 		return nil, err
@@ -31,10 +31,10 @@ func (u *UserRepo) findOne(ctx context.Context, wheres ...predicate.User) (*entS
 	return user, nil
 }
 
-func (u *UserRepo) FindByEmail(ctx context.Context, email string) (*entSchema.User, error) {
+func (u *UserRepo) FindByEmail(ctx context.Context, email string) (*ent.User, error) {
 	return u.findOne(ctx, userSchema.Email(email))
 }
 
-func (u *UserRepo) FindByID(ctx context.Context, uid int) (*entSchema.User, error) {
+func (u *UserRepo) FindByID(ctx context.Context, uid int) (*ent.User, error) {
 	return u.findOne(ctx, userSchema.ID(uid))
 }
