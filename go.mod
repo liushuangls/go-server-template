@@ -16,6 +16,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
 	github.com/redis/go-redis/v9 v9.0.5
+	github.com/sourcegraph/conc v0.3.0
 	github.com/spf13/viper v1.16.0
 	go.uber.org/zap v1.25.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1

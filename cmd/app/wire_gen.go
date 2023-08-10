@@ -22,8 +22,8 @@ func app() (*cmd.App, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	engine := routes.NewEngine(config)
 	sugaredLogger := cmd.NewLogger(config)
+	engine := routes.NewEngine(config)
 	client, err := data.NewRedisClient(config)
 	if err != nil {
 		return nil, nil, err
@@ -46,7 +46,11 @@ func app() (*cmd.App, func(), error) {
 	userService := service.NewUserService(sugaredLogger, jwt, userRepo)
 	userRoute := v1.NewUserRoute(sugaredLogger, limiter, redislockClient, userService)
 	httpEngine := routes.NewHttpEngine(engine, config, sugaredLogger, limiter, userRoute)
-	cmdApp := cmd.NewApp(httpEngine)
+	options := cmd.Options{
+		Log:  sugaredLogger,
+		Http: httpEngine,
+	}
+	cmdApp := cmd.NewApp(options)
 	return cmdApp, func() {
 		cleanup()
 	}, nil

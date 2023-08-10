@@ -9,11 +9,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/liushuangls/go-server-template/internal/data/ent/predicate"
-	"github.com/liushuangls/go-server-template/internal/data/ent/user"
-
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
+	"github.com/liushuangls/go-server-template/internal/data/ent/predicate"
+	"github.com/liushuangls/go-server-template/internal/data/ent/user"
 )
 
 const (

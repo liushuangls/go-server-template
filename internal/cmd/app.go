@@ -1,19 +1,26 @@
 package cmd
 
 import (
-	configs "github.com/liushuangls/go-server-template/configs"
-	"github.com/liushuangls/go-server-template/internal/routes"
+	"context"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/sourcegraph/conc"
+	"go.uber.org/zap"
+
+	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/pkg/jwt"
 	"github.com/liushuangls/go-server-template/pkg/logger"
-	"go.uber.org/zap"
 )
 
 type App struct {
-	http *routes.HttpEngine
+	Options
 }
 
-func NewApp(http *routes.HttpEngine) *App {
-	return &App{http: http}
+func NewApp(opt Options) *App {
+	return &App{opt}
 }
 
 func NewLogger(conf *configs.Config) *zap.SugaredLogger {
@@ -25,5 +32,31 @@ func NewJwt(conf *configs.Config) (*jwt.JWT, error) {
 }
 
 func (a *App) Run() error {
-	return a.http.Run()
+	httpSrv, err := a.Http.Run()
+	if err != nil {
+		return err
+	}
+
+	// 监控结束指令
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	// 停止服务
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	var wg conc.WaitGroup
+	//wg.Go(a.cron.Stop)
+	wg.Go(func() {
+		if err := httpSrv.Shutdown(ctx); err != nil {
+			a.Log.Errorw("Server Shutdown", "err", err)
+		}
+	})
+	if r := wg.WaitAndRecover(); r != nil {
+		a.Log.Errorw("Server Shutdown", "wait err", r.String())
+	}
+
+	a.Log.Infof("server exiting")
+	return nil
 }

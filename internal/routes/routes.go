@@ -1,20 +1,17 @@
 package routes
 
 import (
-	"context"
+	"errors"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis_rate/v10"
-	configs "github.com/liushuangls/go-server-template/configs"
+	"go.uber.org/zap"
+
+	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/internal/routes/common"
 	"github.com/liushuangls/go-server-template/internal/routes/middleware"
 	v1 "github.com/liushuangls/go-server-template/internal/routes/v1"
-	"go.uber.org/zap"
 )
 
 func NewEngine(conf *configs.Config) *gin.Engine {
@@ -51,7 +48,7 @@ func (h *HttpEngine) RegisterRoute() {
 	h.user.RegisterRoute(r)
 }
 
-func (h *HttpEngine) Run() error {
+func (h *HttpEngine) Run() (*http.Server, error) {
 	common.SetRespLog(h.log)
 	h.RegisterRoute()
 	srv := &http.Server{
@@ -60,19 +57,9 @@ func (h *HttpEngine) Run() error {
 	}
 
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			h.log.Fatalf("listen: %s\n", err)
 		}
 	}()
-	quit := make(chan os.Signal)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	defer cancel()
-
-	if err := srv.Shutdown(ctx); err != nil {
-		h.log.Fatal("Server Shutdown:", err)
-	}
-	h.log.Infof("server exiting")
-	return nil
+	return srv, nil
 }
