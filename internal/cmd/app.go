@@ -32,8 +32,13 @@ func NewJwt(conf *configs.Config) (*jwt.JWT, error) {
 }
 
 func (a *App) Run() error {
+	// start http server
 	httpSrv, err := a.Http.Run()
 	if err != nil {
+		return err
+	}
+	// start crontab
+	if err := a.Cron.StartAsync(); err != nil {
 		return err
 	}
 
@@ -47,7 +52,7 @@ func (a *App) Run() error {
 	defer cancel()
 
 	var wg conc.WaitGroup
-	//wg.Go(a.cron.Stop)
+	wg.Go(a.Cron.Stop)
 	wg.Go(func() {
 		if err := httpSrv.Shutdown(ctx); err != nil {
 			a.Log.Errorw("Server Shutdown", "err", err)

@@ -9,6 +9,7 @@ package main
 import (
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/internal/cmd"
+	"github.com/liushuangls/go-server-template/internal/crontab"
 	"github.com/liushuangls/go-server-template/internal/data"
 	"github.com/liushuangls/go-server-template/internal/routes"
 	"github.com/liushuangls/go-server-template/internal/routes/v1"
@@ -64,9 +65,14 @@ func app() (*cmd.App, func(), error) {
 		User:    userRoute,
 	}
 	httpEngine := routes.NewHttpEngine(routesOptions)
+	crontabOptions := crontab.Options{
+		Log: sugaredLogger,
+	}
+	crontabClient := crontab.NewClient(crontabOptions)
 	cmdOptions := cmd.Options{
 		Log:  sugaredLogger,
 		Http: httpEngine,
+		Cron: crontabClient,
 	}
 	cmdApp := cmd.NewApp(cmdOptions)
 	return cmdApp, func() {

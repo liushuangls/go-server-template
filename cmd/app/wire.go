@@ -8,6 +8,7 @@ import (
 
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/internal/cmd"
+	"github.com/liushuangls/go-server-template/internal/crontab"
 	"github.com/liushuangls/go-server-template/internal/data"
 	"github.com/liushuangls/go-server-template/internal/routes"
 	"github.com/liushuangls/go-server-template/internal/service"
@@ -19,6 +20,7 @@ func app() (*cmd.App, func(), error) {
 		routes.ProviderSet,
 		data.ProviderSet,
 		service.ProviderSet,
+		crontab.ProviderSet,
 		cmd.ProviderSet,
 	))
 }
