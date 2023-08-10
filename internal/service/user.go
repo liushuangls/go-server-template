@@ -4,32 +4,27 @@ import (
 	"context"
 	"time"
 
-	"github.com/liushuangls/go-server-template/internal/data"
 	"github.com/liushuangls/go-server-template/internal/data/ent"
 	"github.com/liushuangls/go-server-template/internal/dto/request"
 	"github.com/liushuangls/go-server-template/internal/dto/response"
 	"github.com/liushuangls/go-server-template/pkg/ecode"
 	"github.com/liushuangls/go-server-template/pkg/jwt"
-	"go.uber.org/zap"
 )
 
 type UserService struct {
-	log *zap.SugaredLogger
-	jwt *jwt.JWT
-
-	userRepo *data.UserRepo
+	Options
 }
 
-func NewUserService(log *zap.SugaredLogger, jwt *jwt.JWT, userRepo *data.UserRepo) *UserService {
-	return &UserService{log: log, jwt: jwt, userRepo: userRepo}
+func NewUserService(opt Options) *UserService {
+	return &UserService{opt}
 }
 
 func (u *UserService) getJwtToken(user *ent.User) (*jwt.Token, error) {
-	return u.jwt.GenerateToken(jwt.ClaimsParam{UserID: user.ID}, time.Hour*24*90)
+	return u.Jwt.GenerateToken(jwt.ClaimsParam{UserID: user.ID}, time.Hour*24*90)
 }
 
 func (u *UserService) LoginWithEmail(ctx context.Context, req *request.EmailLoginReq) (*response.UserLoginInfo, error) {
-	user, err := u.userRepo.FindByEmail(ctx, req.Email)
+	user, err := u.UserRepo.FindByEmail(ctx, req.Email)
 	if err != nil {
 		if err == ecode.NotFound {
 			return nil, ecode.EmailOrPasswordErr

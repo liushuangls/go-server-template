@@ -3,15 +3,14 @@ package routes
 import (
 	"errors"
 	"net/http"
+	"reflect"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis_rate/v10"
-	"go.uber.org/zap"
 
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/internal/routes/common"
 	"github.com/liushuangls/go-server-template/internal/routes/middleware"
-	v1 "github.com/liushuangls/go-server-template/internal/routes/v1"
 )
 
 func NewEngine(conf *configs.Config) *gin.Engine {
@@ -29,36 +28,40 @@ func NewEngine(conf *configs.Config) *gin.Engine {
 }
 
 type HttpEngine struct {
-	router  *gin.Engine
-	conf    *configs.Config
-	log     *zap.SugaredLogger
-	limiter *redis_rate.Limiter
-
-	user *v1.UserRoute
+	Options
 }
 
-func NewHttpEngine(router *gin.Engine, conf *configs.Config, log *zap.SugaredLogger, limiter *redis_rate.Limiter, user *v1.UserRoute) *HttpEngine {
-	return &HttpEngine{router: router, conf: conf, log: log, limiter: limiter, user: user}
+type Registrable interface {
+	RegisterRoute(*gin.RouterGroup)
+}
+
+func NewHttpEngine(opt Options) *HttpEngine {
+	return &HttpEngine{opt}
 }
 
 func (h *HttpEngine) RegisterRoute() {
-	r := h.router.Group("")
-	r.Use(middleware.RateLimitWithIP(h.limiter, redis_rate.PerMinute(60), "total"))
+	r := h.Router.Group("")
+	r.Use(middleware.RateLimitWithIP(h.Limiter, redis_rate.PerMinute(60), "total"))
 
-	h.user.RegisterRoute(r)
+	v := reflect.ValueOf(h.Options)
+	for i := 0; i < v.NumField(); i++ {
+		if router, ok := v.Field(i).Interface().(Registrable); ok {
+			router.RegisterRoute(r)
+		}
+	}
 }
 
 func (h *HttpEngine) Run() (*http.Server, error) {
-	common.SetRespLog(h.log)
+	common.SetRespLog(h.Log)
 	h.RegisterRoute()
 	srv := &http.Server{
-		Addr:    h.conf.App.Addr,
-		Handler: h.router,
+		Addr:    h.Conf.App.Addr,
+		Handler: h.Router,
 	}
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			h.log.Fatalf("listen: %s\n", err)
+			h.Log.Fatalf("listen: %s\n", err)
 		}
 	}()
 	return srv, nil

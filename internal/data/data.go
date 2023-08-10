@@ -6,12 +6,13 @@ import (
 	"entgo.io/ent/dialect"
 	"github.com/bsm/redislock"
 	"github.com/go-redis/redis_rate/v10"
+	"github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
+
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/internal/data/ent"
 	"github.com/liushuangls/go-server-template/internal/data/ent/migrate"
 	"github.com/liushuangls/go-server-template/pkg/entutil"
-	"github.com/redis/go-redis/v9"
-	"go.uber.org/zap"
 
 	_ "github.com/go-sql-driver/mysql"
 )

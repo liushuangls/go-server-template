@@ -43,14 +43,32 @@ func app() (*cmd.App, func(), error) {
 		return nil, nil, err
 	}
 	userRepo := data.NewUserRepo(dataData)
-	userService := service.NewUserService(sugaredLogger, jwt, userRepo)
-	userRoute := v1.NewUserRoute(sugaredLogger, limiter, redislockClient, userService)
-	httpEngine := routes.NewHttpEngine(engine, config, sugaredLogger, limiter, userRoute)
-	options := cmd.Options{
+	options := service.Options{
+		Log:      sugaredLogger,
+		Jwt:      jwt,
+		UserRepo: userRepo,
+	}
+	userService := service.NewUserService(options)
+	v1Options := v1.Options{
+		Log:         sugaredLogger,
+		Limiter:     limiter,
+		Locker:      redislockClient,
+		UserService: userService,
+	}
+	userRoute := v1.NewUserRoute(v1Options)
+	routesOptions := routes.Options{
+		Router:  engine,
+		Conf:    config,
+		Log:     sugaredLogger,
+		Limiter: limiter,
+		User:    userRoute,
+	}
+	httpEngine := routes.NewHttpEngine(routesOptions)
+	cmdOptions := cmd.Options{
 		Log:  sugaredLogger,
 		Http: httpEngine,
 	}
-	cmdApp := cmd.NewApp(options)
+	cmdApp := cmd.NewApp(cmdOptions)
 	return cmdApp, func() {
 		cleanup()
 	}, nil

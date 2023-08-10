@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/liushuangls/go-server-template/internal/data/ent"
 	"go.uber.org/zap"
+
+	"github.com/liushuangls/go-server-template/internal/data/ent"
 )
 
 func withTx(ctx context.Context, db *ent.Client, log *zap.SugaredLogger, fn func(tx *ent.Tx) error) error {
