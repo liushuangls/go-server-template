@@ -3,7 +3,7 @@ install:
 	go install entgo.io/ent/cmd/ent@latest
 
 run:
-	APP_MODE=debug go run -tags=jsoniter cmd/app/main.go cmd/app/wire_gen.go
+	APP_MODE=local go run -tags=go_json cmd/app/main.go cmd/app/wire_gen.go
 
 generate:
 	go generate ./internal/data/ent
@@ -11,4 +11,4 @@ generate:
 
 build: generate
 	go mod tidy -v
-	go build -tags=jsoniter -o=output/server cmd/app/main.go cmd/app/wire_gen.go
+	go build -tags=go_json -o=output/server cmd/app/main.go cmd/app/wire_gen.go

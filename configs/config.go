@@ -1,11 +1,13 @@
 package configs
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
-	"github.com/liushuangls/go-server-template/pkg/logger"
 	"github.com/spf13/viper"
+
+	"github.com/liushuangls/go-server-template/pkg/logger"
 )
 
 type Config struct {
@@ -51,11 +53,11 @@ func (c *Config) IsReleaseMode() bool {
 
 func InitConfig() (*Config, error) {
 	var cfg Config
-	configPath := "configs/prod.config.yaml"
-	debug := os.Getenv("APP_MODE") == "debug"
-	if debug {
-		configPath = "configs/test.config.yaml"
+	mode := os.Getenv("APP_MODE")
+	if mode == "" {
+		mode = "prod"
 	}
+	configPath := fmt.Sprintf("configs/%s.config.yaml", mode)
 	file, err := os.Open(configPath)
 	if err != nil {
 		return nil, err

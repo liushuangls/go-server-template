@@ -19,3 +19,5 @@
 log
 .idea
 output/
+
+configs/local.config.yaml
