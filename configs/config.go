@@ -7,15 +7,15 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/liushuangls/go-server-template/pkg/logger"
+	"github.com/liushuangls/go-server-template/pkg/xslog"
 )
 
 type Config struct {
-	App   App           `yaml:"App"`
-	DB    DB            `yaml:"DB"`
-	Redis Redis         `yaml:"Redis"`
-	Log   logger.Config `yaml:"Log"`
-	Jwt   Jwt           `yaml:"Jwt"`
+	App   App          `yaml:"App"`
+	DB    DB           `yaml:"DB"`
+	Redis Redis        `yaml:"Redis"`
+	Log   xslog.Config `yaml:"Log"`
+	Jwt   Jwt          `yaml:"Jwt"`
 }
 
 type App struct {
@@ -44,7 +44,7 @@ type Jwt struct {
 }
 
 func (c *Config) IsDebugMode() bool {
-	return c.App.Mode == "debug"
+	return c.App.Mode == "debug" || c.App.Mode == "local"
 }
 
 func (c *Config) IsReleaseMode() bool {
@@ -57,7 +57,7 @@ func InitConfig() (*Config, error) {
 	if mode == "" {
 		mode = "prod"
 	}
-	configPath := fmt.Sprintf("configs/%s.config.yaml", mode)
+	configPath := fmt.Sprintf("configs/%s.yaml", mode)
 	file, err := os.Open(configPath)
 	if err != nil {
 		return nil, err

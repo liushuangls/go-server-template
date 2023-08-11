@@ -1,20 +1,13 @@
 package common
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/liushuangls/go-server-template/pkg/ecode"
-	"go.uber.org/zap"
 )
-
-var (
-	log *zap.SugaredLogger
-)
-
-func SetRespLog(logger *zap.SugaredLogger) {
-	log = logger
-}
 
 type Resp struct {
 	Code    int    `json:"code"`
@@ -36,7 +29,7 @@ func NewResp(data interface{}, err error) (int, *Resp) {
 	}
 	if code == ecode.UnknownCode {
 		msg = "Internal Server Error"
-		log.Errorf("NewResp receive unknown error: %s", ec)
+		slog.Error("NewResp receive unknown error", "err", ec)
 	}
 	return httpCode, &Resp{
 		Code:    code,

@@ -2,17 +2,17 @@ package cmd
 
 import (
 	"context"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/sourcegraph/conc"
-	"go.uber.org/zap"
 
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/pkg/jwt"
-	"github.com/liushuangls/go-server-template/pkg/logger"
+	"github.com/liushuangls/go-server-template/pkg/xslog"
 )
 
 type App struct {
@@ -20,11 +20,18 @@ type App struct {
 }
 
 func NewApp(opt Options) *App {
-	return &App{opt}
+	app := &App{opt}
+	app.setDefaultSlog()
+	return app
 }
 
-func NewLogger(conf *configs.Config) *zap.SugaredLogger {
-	return logger.NewLogger(&conf.Log)
+func (a *App) setDefaultSlog() {
+	if a.Config.IsDebugMode() {
+		a.Config.Log.Level = slog.LevelDebug
+		a.Config.Log.ExtraWriter = os.Stdout
+	}
+	fileLogger := xslog.NewFileSlog(&a.Config.Log)
+	slog.SetDefault(fileLogger)
 }
 
 func NewJwt(conf *configs.Config) (*jwt.JWT, error) {
@@ -55,13 +62,13 @@ func (a *App) Run() error {
 	wg.Go(a.Cron.Stop)
 	wg.Go(func() {
 		if err := httpSrv.Shutdown(ctx); err != nil {
-			a.Log.Errorw("Server Shutdown", "err", err)
+			slog.Error("Server Shutdown", "err", err)
 		}
 	})
 	if r := wg.WaitAndRecover(); r != nil {
-		a.Log.Errorw("Server Shutdown", "wait err", r.String())
+		slog.Error("Server Shutdown", "wait err", r.String())
 	}
 
-	a.Log.Infof("server exiting")
+	slog.Info("server exiting")
 	return nil
 }

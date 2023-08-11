@@ -7,7 +7,6 @@ import (
 	"github.com/bsm/redislock"
 	"github.com/go-redis/redis_rate/v10"
 	"github.com/redis/go-redis/v9"
-	"go.uber.org/zap"
 
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/internal/data/ent"
@@ -20,13 +19,12 @@ import (
 type Data struct {
 	db    *ent.Client
 	redis *redis.Client
-	log   *zap.SugaredLogger
 }
 
-func NewData(entClient *ent.Client, log *zap.SugaredLogger, redisCli *redis.Client) (*Data, func(), error) {
+func NewData(entClient *ent.Client, redisCli *redis.Client) (*Data, func(), error) {
+
 	d := &Data{
 		db:    entClient,
-		log:   log,
 		redis: redisCli,
 	}
 	return d, func() {

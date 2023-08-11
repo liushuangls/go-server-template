@@ -5,10 +5,10 @@ App:
 DB:
   Dialect: mysql
   DSN: user:passwd@tcp(127.0.0.1:3306)/database?charset=utf8mb4&parseTime=True&loc=Local
-  MaxIdle: 5
-  MaxActive: 10
-  MaxLifetime: 3600
-  AutoMigrate: true
+  MaxIdle: 100
+  MaxActive: 100
+  MaxLifetime: 300
+  AutoMigrate: false
 
 Redis:
   Addr: 127.0.0.1:6379
@@ -17,11 +17,12 @@ Redis:
 
 Log:
   FileDir: log
-  MaxSize: 1
+  MaxSize: 100
   MaxBackups: 5
-  MaxAge: 30
+  MaxAge: 60
   Compress: false
   LocalTime: false
+  AddSource: true
 
 Jwt:
   Secret: "secret_122"

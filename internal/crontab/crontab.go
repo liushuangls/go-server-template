@@ -2,6 +2,7 @@ package crontab
 
 import (
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/go-co-op/gocron"
@@ -44,6 +45,6 @@ func (c *Client) Stop() {
 
 func (c *Client) registerPrintTask() (*gocron.Job, error) {
 	return c.scheduler.Every("2m").Do(func() {
-		c.Log.Infow("crontab")
+		slog.Info("crontab")
 	})
 }

@@ -16,7 +16,6 @@ gonew github.com/liushuangls/go-server-template your.domain/myprog
 - ent - database orm
 - gin - router
 - viper - config manager
-- zap - the logger
 - and so on...
     - jwt
     - ...

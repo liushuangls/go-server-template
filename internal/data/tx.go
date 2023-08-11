@@ -3,13 +3,12 @@ package data
 import (
 	"context"
 	"fmt"
-
-	"go.uber.org/zap"
+	"log/slog"
 
 	"github.com/liushuangls/go-server-template/internal/data/ent"
 )
 
-func withTx(ctx context.Context, db *ent.Client, log *zap.SugaredLogger, fn func(tx *ent.Tx) error) error {
+func withTx(ctx context.Context, db *ent.Client, fn func(tx *ent.Tx) error) error {
 	tx, err := db.Tx(ctx)
 	if err != nil {
 		return err
@@ -17,7 +16,7 @@ func withTx(ctx context.Context, db *ent.Client, log *zap.SugaredLogger, fn func
 	defer func() {
 		if v := recover(); v != nil {
 			if err := tx.Rollback(); err != nil {
-				log.Errorf("withTx: rolling back transaction: %v", err)
+				slog.Error("withTx: rolling back transaction", "err", err)
 			}
 			panic(v)
 		}

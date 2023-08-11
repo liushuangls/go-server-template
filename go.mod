@@ -19,7 +19,6 @@ require (
 	github.com/redis/go-redis/v9 v9.0.5
 	github.com/sourcegraph/conc v0.3.0
 	github.com/spf13/viper v1.16.0
-	go.uber.org/zap v1.25.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
@@ -59,7 +58,6 @@ require (
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
-	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
 	golang.org/x/mod v0.10.0 // indirect

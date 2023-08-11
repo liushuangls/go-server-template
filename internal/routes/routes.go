@@ -2,6 +2,7 @@ package routes
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"reflect"
 
@@ -9,7 +10,6 @@ import (
 	"github.com/go-redis/redis_rate/v10"
 
 	"github.com/liushuangls/go-server-template/configs"
-	"github.com/liushuangls/go-server-template/internal/routes/common"
 	"github.com/liushuangls/go-server-template/internal/routes/middleware"
 )
 
@@ -52,7 +52,6 @@ func (h *HttpEngine) RegisterRoute() {
 }
 
 func (h *HttpEngine) Run() (*http.Server, error) {
-	common.SetRespLog(h.Log)
 	h.RegisterRoute()
 	srv := &http.Server{
 		Addr:    h.Conf.App.Addr,
@@ -61,7 +60,7 @@ func (h *HttpEngine) Run() (*http.Server, error) {
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			h.Log.Fatalf("listen: %s\n", err)
+			log.Fatalf("listen: %s\n", err)
 		}
 	}()
 	return srv, nil

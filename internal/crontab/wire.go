@@ -2,7 +2,6 @@ package crontab
 
 import (
 	"github.com/google/wire"
-	"go.uber.org/zap"
 )
 
 var ProviderSet = wire.NewSet(
@@ -11,5 +10,4 @@ var ProviderSet = wire.NewSet(
 )
 
 type Options struct {
-	Log *zap.SugaredLogger
 }

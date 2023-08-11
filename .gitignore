@@ -20,4 +20,9 @@ log
 .idea
 output/
 
-configs/local.config.yaml
+configs/local.yaml
+**/data/ent/*
+cmd/app/wire_gen.go
+
+!**/data/ent/schema/
+!**/data/ent/generate.go
