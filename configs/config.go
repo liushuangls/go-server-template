@@ -48,7 +48,7 @@ func (c *Config) IsDebugMode() bool {
 }
 
 func (c *Config) IsReleaseMode() bool {
-	return c.App.Mode == "release"
+	return c.App.Mode == "release" || c.App.Mode == "prod"
 }
 
 func InitConfig() (*Config, error) {
