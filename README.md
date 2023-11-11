@@ -8,6 +8,11 @@ An easy to use, easy to maintenance template.
 go install golang.org/x/tools/cmd/gonew@latest
 
 gonew github.com/liushuangls/go-server-template your.domain/myprog
+
+// start server
+make install
+make generate
+make run
 ```
 
 # Features
