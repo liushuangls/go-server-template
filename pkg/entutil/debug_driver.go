@@ -2,12 +2,12 @@ package entutil
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"time"
 
 	"entgo.io/ent/dialect"
-	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 )
 
