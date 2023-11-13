@@ -11,6 +11,7 @@ import (
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/internal/data/ent"
 	"github.com/liushuangls/go-server-template/internal/data/ent/migrate"
+	"github.com/liushuangls/go-server-template/pkg/ecode"
 	"github.com/liushuangls/go-server-template/pkg/entutil"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -80,4 +81,11 @@ func NewRedisLocker(rdb *redis.Client) *redislock.Client {
 
 func NewRedisLimiter(rdb *redis.Client) *redis_rate.Limiter {
 	return redis_rate.NewLimiter(rdb)
+}
+
+func (d *Data) warpError(err error) error {
+	if ent.IsNotFound(err) {
+		return ecode.NotFound
+	}
+	return ecode.WithCallerAndSkip(err, 2)
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/liushuangls/go-server-template/internal/data/ent"
 	"github.com/liushuangls/go-server-template/internal/data/ent/predicate"
 	userSchema "github.com/liushuangls/go-server-template/internal/data/ent/user"
-	"github.com/liushuangls/go-server-template/pkg/ecode"
 )
 
 type UserRepo struct {
@@ -23,10 +22,7 @@ func (u *UserRepo) findOne(ctx context.Context, wheres ...predicate.User) (*ent.
 		Where(userSchema.DeleteTimeIsNil()).
 		First(ctx)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return nil, ecode.NotFound
-		}
-		return nil, err
+		return nil, u.warpError(err)
 	}
 	return user, nil
 }
