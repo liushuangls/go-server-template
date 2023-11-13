@@ -38,8 +38,9 @@ func (e *Error) Is(err error) bool {
 
 // WithCause with the underlying cause of the error.
 func (e *Error) WithCause(cause error) *Error {
-	e.cause = cause
-	return e
+	newErr := New(e.Code, e.HttpCode, e.Message)
+	newErr.cause = cause
+	return newErr
 }
 
 // New returns an error object for the code, message.
