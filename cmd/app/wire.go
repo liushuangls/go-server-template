@@ -4,6 +4,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/google/wire"
 
 	"github.com/liushuangls/go-server-template/configs"
@@ -14,7 +16,7 @@ import (
 	"github.com/liushuangls/go-server-template/internal/service"
 )
 
-func app() (*cmd.App, func(), error) {
+func app(ctx context.Context) (*cmd.App, func(), error) {
 	panic(wire.Build(
 		configs.InitConfig,
 		routes.ProviderSet,

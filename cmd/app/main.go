@@ -1,13 +1,22 @@
 package main
 
+import (
+	"context"
+	"time"
+)
+
 func main() {
-	server, cleanup, err := app()
-	if err != nil {
-		panic(err)
-	}
-	err = server.Run()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	server, cleanup, err := app(ctx)
 	if err != nil {
 		panic(err)
 	}
 	defer cleanup()
+
+	err = server.Run()
+	if err != nil {
+		panic(err)
+	}
 }
