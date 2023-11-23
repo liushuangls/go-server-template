@@ -7,20 +7,25 @@ import (
 
 	"github.com/spf13/viper"
 
+	"github.com/liushuangls/go-server-template/pkg/xoauth2"
+	"github.com/liushuangls/go-server-template/pkg/xoss"
 	"github.com/liushuangls/go-server-template/pkg/xslog"
 )
 
 type Config struct {
-	App   App          `yaml:"App"`
-	DB    DB           `yaml:"DB"`
-	Redis Redis        `yaml:"Redis"`
-	Log   xslog.Config `yaml:"Log"`
-	Jwt   Jwt          `yaml:"Jwt"`
+	App       App          `yaml:"App"`
+	DB        DB           `yaml:"DB"`
+	Redis     Redis        `yaml:"Redis"`
+	Log       xslog.Config `yaml:"Log"`
+	Jwt       Jwt          `yaml:"Jwt"`
+	OAuth2    OAuth2       `yaml:"OAuth2"`
+	PublicOSS xoss.Config  `yaml:"PublicOSS"`
 }
 
 type App struct {
-	Addr string `yaml:"Addr"`
-	Mode string `yaml:"Mode"`
+	Addr        string `yaml:"Addr"`
+	Mode        string `yaml:"Mode"`
+	IP2Location string `yaml:"IP2Location"`
 }
 
 type DB struct {
@@ -41,6 +46,12 @@ type Redis struct {
 type Jwt struct {
 	Secret string `yaml:"Secret"`
 	Issuer string `yaml:"Issuer"`
+}
+
+type OAuth2 struct {
+	Google    xoauth2.Config `yaml:"Google"`
+	Microsoft xoauth2.Config `yaml:"Microsoft"`
+	Apple     xoauth2.Config `yaml:"Apple"`
 }
 
 func (c *Config) IsDebugMode() bool {

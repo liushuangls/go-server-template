@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis_rate/v10"
 	"github.com/google/wire"
+	"github.com/ip2location/ip2location-go/v9"
 
 	"github.com/liushuangls/go-server-template/configs"
 	v1 "github.com/liushuangls/go-server-template/internal/routes/v1"
@@ -21,6 +22,7 @@ type Options struct {
 	Router  *gin.Engine
 	Conf    *configs.Config
 	Limiter *redis_rate.Limiter
+	IPDB    *ip2location.DB
 
 	User *v1.UserRoute
 }

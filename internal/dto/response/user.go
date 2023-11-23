@@ -5,8 +5,11 @@ import (
 )
 
 type UserInfo struct {
-	ID    int    `json:"id"`
-	Email string `json:"email"`
+	ID         int    `json:"id"`
+	Email      string `json:"email"`
+	Avatar     string `json:"avatar"`
+	NickName   string `json:"nickname"`
+	RegisterAt int64  `json:"register_at"`
 }
 
 type UserLoginInfo struct {

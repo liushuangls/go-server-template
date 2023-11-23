@@ -41,7 +41,10 @@ func NewHttpEngine(opt Options) *HttpEngine {
 
 func (h *HttpEngine) RegisterRoute() {
 	r := h.Router.Group("")
-	r.Use(middleware.RateLimitWithIP(h.Limiter, redis_rate.PerMinute(60), "total"))
+	r.Use(
+		middleware.SetIPInfo(h.IPDB),
+		middleware.RateLimitWithIP(h.Limiter, redis_rate.PerMinute(60), "total"),
+	)
 
 	v := reflect.ValueOf(h.Options)
 	for i := 0; i < v.NumField(); i++ {

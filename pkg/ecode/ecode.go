@@ -5,10 +5,10 @@ var (
 	NotFound       = NewInvalidParamsErr("Not Found")
 	TooManyRequest = BadRequest(1100, "Too Many Request")
 
-	InvalidToken = BadRequest(2000, "Invalid Token")
-	ExpiresToken = BadRequest(2001, "Token Expires")
-
-	EmailOrPasswordErr = BadRequest(2100, "email or password error")
+	// user
+	InvalidToken      = BadRequest(2000, "Invalid Token")
+	ExpiresToken      = BadRequest(2001, "Token Expires")
+	InvalidOAuthState = BadRequest(2002, "Invalid OAuth State")
 )
 
 func NewInvalidParamsErr(msg string) *Error {
