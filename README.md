@@ -5,13 +5,20 @@ An easy to use, easy to maintenance template.
 # Use
 
 ```
+// install
 go install golang.org/x/tools/cmd/gonew@latest
 
 gonew github.com/liushuangls/go-server-template your.domain/myprog
 
-// start server
+// run
+cd myprog
+
+cp configs/test.yaml configs/local.yaml
+
 make install
+
 make generate
+
 make run
 ```
 
