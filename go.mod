@@ -3,7 +3,7 @@ module github.com/liushuangls/go-server-template
 go 1.21
 
 require (
-	entgo.io/ent v0.12.4
+	entgo.io/ent v0.12.5
 	github.com/bsm/redislock v0.9.4
 	github.com/coreos/go-oidc/v3 v3.7.0
 	github.com/gin-contrib/cors v1.4.0
@@ -21,7 +21,7 @@ require (
 	github.com/sourcegraph/conc v0.3.0
 	github.com/spf13/cast v1.5.1
 	github.com/spf13/viper v1.17.0
-	golang.org/x/oauth2 v0.13.0
+	golang.org/x/oauth2 v0.14.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
