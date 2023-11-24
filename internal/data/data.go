@@ -47,7 +47,7 @@ func NewEntClient(conf *configs.Config) (*ent.Client, error) {
 		MaxLifetime: conf.DB.MaxLifetime,
 	})
 	if err != nil {
-		return nil, err
+		return nil, ecode.WithCaller(err)
 	}
 	if conf.IsDebugMode() {
 		drv = entutil.Debug(drv)
@@ -56,7 +56,7 @@ func NewEntClient(conf *configs.Config) (*ent.Client, error) {
 	client := ent.NewClient(ent.Driver(drv))
 	if conf.DB.AutoMigrate {
 		if err := client.Schema.Create(context.Background(), migrate.WithForeignKeys(false)); err != nil {
-			return nil, err
+			return nil, ecode.WithCaller(err)
 		}
 	}
 	return client, nil
@@ -70,7 +70,7 @@ func NewRedisClient(conf *configs.Config) (*redis.Client, error) {
 	})
 	_, err := rdb.Ping(context.Background()).Result()
 	if err != nil {
-		return nil, err
+		return nil, ecode.WithCaller(err)
 	}
 	return rdb, nil
 }
