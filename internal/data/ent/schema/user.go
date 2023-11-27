@@ -2,7 +2,6 @@ package schema
 
 import (
 	"entgo.io/ent"
-	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -33,9 +32,6 @@ func (User) Fields() []ent.Field {
 		field.String("password").Default(""),
 		field.String("avatar").Default(""),
 		field.String("profile").Default(""),
-		field.Time("bind_at").Nillable().Optional().SchemaType(map[string]string{
-			dialect.MySQL: "datetime",
-		}),
 	}
 }
 

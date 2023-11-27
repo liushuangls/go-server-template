@@ -12,7 +12,6 @@ CREATE TABLE `users` (
  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
  `profile` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '',
- `bind_at` datetime DEFAULT NULL,
  PRIMARY KEY (`id`),
  KEY `user_create_time` (`create_time`),
  KEY `user_delete_time` (`delete_time`),
