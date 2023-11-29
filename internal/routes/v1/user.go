@@ -5,6 +5,7 @@ import (
 
 	"github.com/liushuangls/go-server-template/internal/dto/request"
 	"github.com/liushuangls/go-server-template/internal/routes/common"
+	"github.com/liushuangls/go-server-template/internal/routes/middleware"
 )
 
 type UserRoute struct {
@@ -17,9 +18,12 @@ func NewUserRoute(opt Options) *UserRoute {
 
 func (u *UserRoute) RegisterRoute(router *gin.RouterGroup) {
 	user := router.Group("/v1/user")
+	needAuth := middleware.TokenAuth(true, u.Jwt, u.UserRepo)
 	{
 		user.GET("/oauth/auth_code_url", u.getOAuthCodeUrl)
 		user.GET("/oauth/callback", u.oauthCallback)
+
+		user.GET("/info", needAuth, u.userInfo)
 	}
 }
 
@@ -39,4 +43,9 @@ func (u *UserRoute) oauthCallback(c *gin.Context) {
 		return
 	}
 	common.WrapResp(c)(u.UserService.OAuthCallback(c.Request.Context(), common.MustGetIPInfo(c), &req))
+}
+
+func (u *UserRoute) userInfo(c *gin.Context) {
+	user := common.MustGetCurrentUserInfo(c)
+	common.WrapResp(c)(u.UserService.UserInfo(c.Request.Context(), user))
 }

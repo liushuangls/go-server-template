@@ -28,6 +28,10 @@ func NewUserService(opt *Options) *UserService {
 	return &UserService{opt}
 }
 
+func (u *UserService) UserInfo(ctx context.Context, user *ent.User) (*response.UserInfo, error) {
+	return u.getUserInfo(user), nil
+}
+
 func (u *UserService) getAndSaveOAuthState(ctx context.Context) string {
 	nonce := uuid.NewString()
 	key := fmt.Sprintf("oauth2:%s", nonce)
@@ -137,24 +141,21 @@ func (u *UserService) getLoginInfo(user *ent.User) (*response.UserLoginInfo, err
 	if err != nil {
 		return nil, err
 	}
-	userInfo, err := u.getUserInfo(user, token)
-	if err != nil {
-		return nil, err
-	}
-	return userInfo, nil
-}
-
-func (u *UserService) getUserInfo(user *ent.User, token *jwt.Token) (*response.UserLoginInfo, error) {
+	userInfo := u.getUserInfo(user)
 	return &response.UserLoginInfo{
-		UserInfo: response.UserInfo{
-			ID:         user.ID,
-			Email:      user.Email,
-			Avatar:     user.Avatar,
-			NickName:   user.Nickname,
-			RegisterAt: user.CreateTime.Unix(),
-		},
+		UserInfo:    *userInfo,
 		AccessToken: token,
 	}, nil
+}
+
+func (u *UserService) getUserInfo(user *ent.User) *response.UserInfo {
+	return &response.UserInfo{
+		ID:         user.ID,
+		Email:      user.Email,
+		Avatar:     user.Avatar,
+		NickName:   user.Nickname,
+		RegisterAt: user.CreateTime.Unix(),
+	}
 }
 
 func (u *UserService) registerByOAuth(ctx context.Context, idToken *xoauth2.IdToken,
