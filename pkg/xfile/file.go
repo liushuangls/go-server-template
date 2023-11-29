@@ -1,34 +1,42 @@
 package xfile
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"io"
-	"mime/multipart"
+	"net/http"
 	"strings"
 )
 
-func IsImageFile(fh *multipart.FileHeader) (bool, string, error) {
-	return IsImageFileByName(fh.Filename)
-}
-
-func IsImageFileByName(name string) (bool, string, error) {
-	mime := TypeByExtension(name)
-	if strings.HasPrefix(mime, "image/") {
-		return true, mime, nil
-	}
-	return false, "", nil
-}
-
-func CalcFileHexMD5(file io.ReadSeeker) (string, error) {
+// GetFileMIME return file mime type: https://mimesniff.spec.whatwg.org/
+func GetFileMIME(file io.ReadSeeker) (string, error) {
+	// 确保从开头读取
 	_, err := file.Seek(0, 0)
 	if err != nil {
 		return "", err
 	}
-	hash := md5.New()
-	_, err = io.Copy(hash, file)
-	if err != nil {
+
+	// 读取前512字节
+	buffer := make([]byte, 512)
+	n, err := file.Read(buffer)
+	if err != nil && err != io.EOF {
 		return "", err
 	}
-	return hex.EncodeToString(hash.Sum(nil)), nil
+
+	// 读取完成后重置数据
+	defer func() {
+		_, _ = file.Seek(0, 0)
+	}()
+
+	return http.DetectContentType(buffer[:n]), nil
+}
+
+func FileIsImage(file io.ReadSeeker) (bool, error) {
+	mime, err := GetFileMIME(file)
+	if err != nil {
+		return false, err
+	}
+	return MIMEIsImage(mime), nil
+}
+
+func MIMEIsImage(mime string) bool {
+	return strings.HasPrefix(mime, "image/")
 }
