@@ -1,6 +1,7 @@
 package common
 
 import (
+	"errors"
 	"log/slog"
 	"net/http"
 
@@ -44,6 +45,11 @@ func ErrorResp(c *gin.Context, err error) {
 }
 
 func ParamsErrorResp(c *gin.Context, err error) {
+	var errs *ecode.Error
+	if errors.As(err, &errs) {
+		ErrorResp(c, errs)
+		return
+	}
 	ErrorResp(c, ecode.NewInvalidParamsErr(translateErr(err)))
 }
 

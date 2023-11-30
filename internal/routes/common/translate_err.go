@@ -1,6 +1,7 @@
 package common
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/gin-gonic/gin/binding"
@@ -31,8 +32,8 @@ func translateErr(err error) string {
 	if err == nil {
 		return ""
 	}
-	errs, ok := err.(validator.ValidationErrors)
-	if !ok {
+	var errs validator.ValidationErrors
+	if !errors.As(err, &errs) {
 		return err.Error()
 	}
 	var builder strings.Builder
