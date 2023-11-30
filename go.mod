@@ -18,10 +18,10 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/google/uuid v1.4.0
 	github.com/google/wire v0.5.0
-	github.com/h2non/filetype v1.1.3
 	github.com/ip2location/ip2location-go/v9 v9.6.1
 	github.com/redis/go-redis/v9 v9.3.0
 	github.com/sourcegraph/conc v0.3.0
+	github.com/speps/go-hashids/v2 v2.0.1
 	github.com/spf13/cast v1.5.1
 	github.com/spf13/viper v1.17.0
 	golang.org/x/oauth2 v0.14.0

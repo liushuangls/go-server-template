@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/viper"
 
+	"github.com/liushuangls/go-server-template/pkg/hashidv2"
 	"github.com/liushuangls/go-server-template/pkg/xoauth2"
 	"github.com/liushuangls/go-server-template/pkg/xoss"
 	"github.com/liushuangls/go-server-template/pkg/xslog"
@@ -20,6 +21,7 @@ type Config struct {
 	Jwt       Jwt          `yaml:"Jwt"`
 	OAuth2    OAuth2       `yaml:"OAuth2"`
 	PublicOSS xoss.Config  `yaml:"PublicOSS"`
+	HashID    HashID       `yaml:"HashID"`
 }
 
 type App struct {
@@ -52,6 +54,10 @@ type OAuth2 struct {
 	Google    xoauth2.Config `yaml:"Google"`
 	Microsoft xoauth2.Config `yaml:"Microsoft"`
 	Apple     xoauth2.Config `yaml:"Apple"`
+}
+
+type HashID struct {
+	User hashidv2.Config `yaml:"User"`
 }
 
 func (c *Config) IsDebugMode() bool {

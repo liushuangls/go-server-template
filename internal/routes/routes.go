@@ -10,6 +10,7 @@ import (
 	"github.com/go-redis/redis_rate/v10"
 
 	"github.com/liushuangls/go-server-template/configs"
+	"github.com/liushuangls/go-server-template/internal/routes/common"
 	"github.com/liushuangls/go-server-template/internal/routes/middleware"
 )
 
@@ -40,6 +41,7 @@ func NewHttpEngine(opt Options) *HttpEngine {
 }
 
 func (h *HttpEngine) RegisterRoute() {
+	common.SetHashID(h.HashID)
 	r := h.Router.Group("")
 	r.Use(
 		middleware.SetIPInfo(h.IPDB),

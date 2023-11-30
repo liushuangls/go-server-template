@@ -5,7 +5,7 @@ import (
 )
 
 type UserInfo struct {
-	ID         int    `json:"id"`
+	ID         string `json:"id"`
 	Email      string `json:"email"`
 	Avatar     string `json:"avatar"`
 	NickName   string `json:"nickname"`

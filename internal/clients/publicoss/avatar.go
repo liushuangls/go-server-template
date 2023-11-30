@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"math/rand"
+	"mime"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -14,7 +15,6 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/liushuangls/go-server-template/configs"
-	"github.com/liushuangls/go-server-template/pkg/xfile"
 	"github.com/liushuangls/go-server-template/pkg/xoss"
 )
 
@@ -83,7 +83,7 @@ func (a *Avatar) genAvatarByURL(url string, info *avatarStoreInfo) (string, erro
 	}
 	defer resp.Body.Close()
 
-	err = a.oss.PutObject(ctx, info.storeKey, resp.Body, xfile.TypeByExtension(info.storeKey))
+	err = a.oss.PutObject(ctx, info.storeKey, resp.Body, mime.TypeByExtension(info.storeKey))
 	if err != nil {
 		return "", errors.Join(uploadFileFailedErr, fmt.Errorf("genAvatarByURL.PutObject err:%s", err.Error()))
 	}

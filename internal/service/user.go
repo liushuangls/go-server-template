@@ -150,7 +150,7 @@ func (u *UserService) getLoginInfo(user *ent.User) (*response.UserLoginInfo, err
 
 func (u *UserService) getUserInfo(user *ent.User) *response.UserInfo {
 	return &response.UserInfo{
-		ID:         user.ID,
+		ID:         u.HashID.User.EncodeNotE(user.ID),
 		Email:      user.Email,
 		Avatar:     user.Avatar,
 		NickName:   user.Nickname,

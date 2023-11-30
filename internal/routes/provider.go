@@ -7,6 +7,7 @@ import (
 	"github.com/ip2location/ip2location-go/v9"
 
 	"github.com/liushuangls/go-server-template/configs"
+	"github.com/liushuangls/go-server-template/internal/clients"
 	v1 "github.com/liushuangls/go-server-template/internal/routes/v1"
 )
 
@@ -23,6 +24,7 @@ type Options struct {
 	Conf    *configs.Config
 	Limiter *redis_rate.Limiter
 	IPDB    *ip2location.DB
+	HashID  *clients.HashID
 
 	User *v1.UserRoute
 }

@@ -29,6 +29,12 @@ Jwt:
   Secret: "secret_122"
   Issuer: "test.com"
 
+HashID:
+  User:
+    Type: 0
+    Prefix: "U0"
+    Salt: "test"
+
 OAuth2:
   Google:
     ClientID: "xxx"
