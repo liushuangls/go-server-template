@@ -29,9 +29,35 @@ func ShouldBindWithHashID(c *gin.Context, obj any, b ...binding.Binding) error {
 	return ParseHashID(obj)
 }
 
+func ShouldBindUriWithHashID(c *gin.Context, obj any) error {
+	if err := c.ShouldBindUri(obj); err != nil {
+		return err
+	}
+	return ParseHashID(obj)
+}
+
 // example: UserHashID string `hashID:"target=UserID,type=User"`
 func ParseHashID(obj any) error {
-	val := reflect.ValueOf(obj).Elem()
+	values := reflect.ValueOf(obj).Elem()
+
+	if err := parseReflectValue(values); err != nil {
+		return err
+	}
+
+	// 处理嵌入结构
+	for i := 0; i < values.NumField(); i++ {
+		val := values.Field(i)
+		if val.Kind() == reflect.Struct {
+			if err := parseReflectValue(val); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func parseReflectValue(val reflect.Value) error {
 	for i := 0; i < val.NumField(); i++ {
 		tag := val.Type().Field(i).Tag.Get("hashID")
 		if tag == "" {
