@@ -49,7 +49,7 @@ func NewResp(c *gin.Context, data interface{}, err error) (int, *Resp) {
 	}
 	if code == ecode.UnknownCode {
 		msg = "Internal Server Error"
-		slog.Error("NewResp receive unknown error", "err", ec)
+		//slog.Error("NewResp receive unknown error", "err", ec)
 	}
 	if err != nil && ec != nil {
 		go saveServerLog(c, err, ec)
