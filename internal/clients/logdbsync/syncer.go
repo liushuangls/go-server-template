@@ -2,6 +2,7 @@ package logdbsync
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/spf13/cast"
 	"go.uber.org/atomic"
@@ -50,9 +51,14 @@ func (c *Client) Write(p []byte) (n int, err error) {
 		log.Level = serverlog.Level(cast.ToString(log.Extra["level"]))
 		log.ErrMsg = cast.ToString(log.Extra["msg"])
 		log.UserID = cast.ToInt(log.Extra["user_id"])
+		keyErr := cast.ToString(log.Extra["err"])
+		if keyErr != "" {
+			log.ErrMsg += fmt.Sprintf(" err: %s", keyErr)
+		}
 		delete(log.Extra, "level")
 		delete(log.Extra, "msg")
 		delete(log.Extra, "user_id")
+		delete(log.Extra, "err")
 	}
 
 	c.logCh <- log
