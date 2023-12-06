@@ -54,6 +54,6 @@ func (w *worker) writeDB() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	_ = w.repo.Creates(ctx, w.logs...)
-	w.logs = make([]*ent.ServerLog, 0, w.limit)
+	w.logs = w.logs[:0]
 	cancel()
 }
