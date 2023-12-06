@@ -27,7 +27,11 @@ func (c *Client) StartAsync() error {
 		tasks  []func() (*gocron.Job, error)
 	)
 
-	tasks = append(tasks, c.registerPrintTask)
+	tasks = append(
+		tasks,
+		c.registerPrintTask,
+		c.registerLogDBSyncTask,
+	)
 
 	for _, task := range tasks {
 		if _, err := task(); err != nil {
@@ -46,5 +50,11 @@ func (c *Client) Stop() {
 func (c *Client) registerPrintTask() (*gocron.Job, error) {
 	return c.scheduler.Every("2m").Do(func() {
 		slog.Info("crontab")
+	})
+}
+
+func (c *Client) registerLogDBSyncTask() (*gocron.Job, error) {
+	return c.scheduler.Every("2m").Do(func() {
+		_ = c.LogDBSync.Sync()
 	})
 }

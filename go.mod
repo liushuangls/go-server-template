@@ -25,6 +25,7 @@ require (
 	github.com/speps/go-hashids/v2 v2.0.1
 	github.com/spf13/cast v1.5.1
 	github.com/spf13/viper v1.17.0
+	go.uber.org/atomic v1.11.0
 	golang.org/x/oauth2 v0.14.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
@@ -69,7 +70,6 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
-	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.15.0 // indirect

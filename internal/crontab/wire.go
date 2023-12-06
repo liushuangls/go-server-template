@@ -2,6 +2,8 @@ package crontab
 
 import (
 	"github.com/google/wire"
+
+	"github.com/liushuangls/go-server-template/internal/clients/logdbsync"
 )
 
 var ProviderSet = wire.NewSet(
@@ -10,4 +12,5 @@ var ProviderSet = wire.NewSet(
 )
 
 type Options struct {
+	LogDBSync *logdbsync.Client
 }

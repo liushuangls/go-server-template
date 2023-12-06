@@ -35,6 +35,12 @@ func (a *App) setDefaultSlog() {
 			Level:  slog.LevelDebug,
 		})
 	}
+	if a.LogDBSync != nil {
+		extraWriters = append(extraWriters, xslog.ExtraWriter{
+			Writer: a.LogDBSync,
+			Level:  slog.LevelWarn,
+		})
+	}
 
 	a.Config.Log.ExtraWriters = extraWriters
 	fileLogger := xslog.NewFileSlog(&a.Config.Log)
@@ -71,6 +77,9 @@ func (a *App) Run() error {
 		if err := httpSrv.Shutdown(ctx); err != nil {
 			slog.Error("Server Shutdown", "err", err)
 		}
+	})
+	wg.Go(func() {
+		_ = a.LogDBSync.Sync()
 	})
 	if r := wg.WaitAndRecover(); r != nil {
 		slog.Error("Server Shutdown", "wait err", r.String())
