@@ -14,9 +14,14 @@ type Config struct {
 	LocalTime  bool   `yaml:"LocalTime"`
 	AddSource  bool   `yaml:"AddSource"`
 
-	Level       slog.Level
-	ExtraWriter io.Writer
-	ReplaceAttr func(groups []string, a slog.Attr) slog.Attr
+	Level        slog.Level
+	ExtraWriters []ExtraWriter
+	ReplaceAttr  func(groups []string, a slog.Attr) slog.Attr
+}
+
+type ExtraWriter struct {
+	Writer io.Writer
+	Level  slog.Level
 }
 
 func (c *Config) SetLevel(level slog.Level) *Config {

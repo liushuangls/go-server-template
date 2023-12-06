@@ -24,18 +24,20 @@ func newFileHandler(c *Config) fileHandler {
 		loggers: map[slog.Level]*slog.JSONHandler{},
 	}
 	for _, l := range levels {
-		var writer io.Writer
-		writer = &lumberjack.Logger{
+		var writers []io.Writer
+		writers = append(writers, &lumberjack.Logger{
 			Filename:   path.Join(c.FileDir, l.String()+".log"),
 			MaxSize:    c.MaxSize,
 			MaxBackups: c.MaxBackups,
 			MaxAge:     c.MaxAge,
 			Compress:   c.Compress,
+		})
+		for _, e := range c.ExtraWriters {
+			if l >= e.Level {
+				writers = append(writers, e.Writer)
+			}
 		}
-		if c.ExtraWriter != nil {
-			writer = io.MultiWriter(writer, c.ExtraWriter)
-		}
-		f.loggers[l] = slog.NewJSONHandler(writer, &slog.HandlerOptions{
+		f.loggers[l] = slog.NewJSONHandler(io.MultiWriter(writers...), &slog.HandlerOptions{
 			AddSource:   c.AddSource,
 			Level:       c.Level,
 			ReplaceAttr: c.ReplaceAttr,
