@@ -26,10 +26,17 @@ func NewApp(opt Options) *App {
 }
 
 func (a *App) setDefaultSlog() {
+	var extraWriters []xslog.ExtraWriter
+
 	if a.Config.IsDebugMode() {
 		a.Config.Log.Level = slog.LevelDebug
-		a.Config.Log.ExtraWriter = os.Stdout
+		extraWriters = append(extraWriters, xslog.ExtraWriter{
+			Writer: os.Stdout,
+			Level:  slog.LevelDebug,
+		})
 	}
+
+	a.Config.Log.ExtraWriters = extraWriters
 	fileLogger := xslog.NewFileSlog(&a.Config.Log)
 	slog.SetDefault(fileLogger)
 }
