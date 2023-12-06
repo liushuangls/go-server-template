@@ -1,10 +1,11 @@
 package ecode
 
 var (
-	InvalidParams  = NewInvalidParamsErr("Invalid Params")
-	NotFound       = NewInvalidParamsErr("Not Found")
-	TooManyRequest = New(1100, 429, "Too Many Request")
-	InvalidHashID  = BadRequest(1101, "invalid hash id")
+	InvalidParams     = NewInvalidParamsErr("Invalid Params")
+	NotFound          = NewInvalidParamsErr("Not Found")
+	TooManyRequest    = New(1100, 429, "Too Many Request")
+	InvalidHashID     = BadRequest(1101, "invalid hash id")
+	InternalServerErr = InternalServer(500, "Internal Server Error")
 
 	// user
 	InvalidToken      = BadRequest(2000, "Invalid Token")

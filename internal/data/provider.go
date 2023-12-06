@@ -12,4 +12,5 @@ var ProviderSet = wire.NewSet(
 	NewRedisLimiter,
 	NewUserRepo,
 	NewUserOAuthRepo,
+	NewServerLogRepo,
 )

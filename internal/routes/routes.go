@@ -2,8 +2,11 @@ package routes
 
 import (
 	"errors"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	"reflect"
 
 	"github.com/gin-gonic/gin"
@@ -14,18 +17,30 @@ import (
 	"github.com/liushuangls/go-server-template/internal/routes/middleware"
 )
 
-func NewEngine(conf *configs.Config) *gin.Engine {
+func NewEngine(conf *configs.Config) (*gin.Engine, error) {
 	if conf.IsReleaseMode() {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	ginPanicFile, err := os.OpenFile(
+		fmt.Sprintf("%s/gin_panic.log", conf.Log.FileDir),
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
+		0644,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	r := gin.New()
+	r.TrustedPlatform = "X-Real-IP"
 	_ = r.SetTrustedProxies(nil)
 	r.Use(
 		gin.Logger(),
-		gin.Recovery(),
+		//gin.Recovery(),
+		gin.CustomRecoveryWithWriter(io.MultiWriter(os.Stdout, ginPanicFile), common.HandleRecovery),
 		middleware.Cors(true),
 	)
-	return r
+	return r, nil
 }
 
 type HttpEngine struct {
@@ -42,6 +57,7 @@ func NewHttpEngine(opt Options) *HttpEngine {
 
 func (h *HttpEngine) RegisterRoute() {
 	common.SetHashID(h.HashID)
+	common.SetServerLogRepo(h.ServerLogRepo)
 	r := h.Router.Group("")
 	r.Use(
 		middleware.SetIPInfo(h.IPDB),

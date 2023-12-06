@@ -20,6 +20,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/ip2location/ip2location-go/v9 v9.6.1
 	github.com/redis/go-redis/v9 v9.3.0
+	github.com/samber/lo v1.39.0
 	github.com/sourcegraph/conc v0.3.0
 	github.com/speps/go-hashids/v2 v2.0.1
 	github.com/spf13/cast v1.5.1
@@ -72,7 +73,7 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.15.0 // indirect
-	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa // indirect
+	golang.org/x/exp v0.0.0-20231127185646-65229373498e // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.18.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect

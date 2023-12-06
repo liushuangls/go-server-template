@@ -8,6 +8,7 @@ import (
 
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/internal/clients"
+	"github.com/liushuangls/go-server-template/internal/data"
 	v1 "github.com/liushuangls/go-server-template/internal/routes/v1"
 )
 
@@ -25,6 +26,8 @@ type Options struct {
 	Limiter *redis_rate.Limiter
 	IPDB    *ip2location.DB
 	HashID  *clients.HashID
+
+	ServerLogRepo *data.ServerLogRepo
 
 	User *v1.UserRoute
 }

@@ -10,6 +10,7 @@ const (
 	UnknownCode = -1
 	// UnknownHttpCode is unknown reason for error info.
 	UnknownHttpCode = 500
+	PanicCode       = -2
 )
 
 // Error is a status error.
@@ -21,6 +22,12 @@ type Error struct {
 }
 
 func (e *Error) Error() string {
+	//return fmt.Sprintf("error: code = %d httpcode = %d message = %s cause = %v", e.Code, e.HttpCode,
+	//	e.Message, e.cause)
+	return e.Message
+}
+
+func (e *Error) Log() string {
 	return fmt.Sprintf("error: code = %d httpcode = %d message = %s cause = %v", e.Code, e.HttpCode,
 		e.Message, e.cause)
 }

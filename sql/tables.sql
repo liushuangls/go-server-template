@@ -33,3 +33,26 @@ CREATE TABLE `user_oauth` (
   KEY `useroauth_user_id` (`user_id`),
   KEY `useroauth_open_id` (`open_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+CREATE TABLE `server_logs` (
+   `id` bigint NOT NULL AUTO_INCREMENT,
+   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   `user_id` int DEFAULT '0',
+   `ip` varchar(128) default '',
+   `path` varchar(256) default '',
+   `query` text,
+   `body` text,
+   `method` varchar(32) default '',
+   `level` varchar(32) DEFAULT 'error',
+   `from` varchar(32) DEFAULT 'api',
+   `err_msg` varchar(4096) NOT NULL,
+   `resp_err_msg` varchar(4096) default '',
+   `extra` json DEFAULT NULL,
+   `code` int DEFAULT '0',
+   PRIMARY KEY (`id`),
+   KEY `create_time` (`create_time`),
+   KEY `user_id` (`user_id`),
+   KEY `level` (`level`),
+   KEY `code` (`code`),
+   Key `path` (`path`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
