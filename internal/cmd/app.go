@@ -52,7 +52,7 @@ func (a *App) Run() error {
 		return err
 	}
 	// start crontab
-	if err := a.Cron.StartAsync(); err != nil {
+	if err := a.Cron.Start(); err != nil {
 		return err
 	}
 

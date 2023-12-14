@@ -1,50 +1,60 @@
 package crontab
 
 import (
-	"fmt"
 	"log/slog"
+	"reflect"
 	"time"
 
-	"github.com/go-co-op/gocron"
+	"github.com/go-co-op/gocron/v2"
 )
 
 type Client struct {
 	Options
-	scheduler *gocron.Scheduler
+	scheduler gocron.Scheduler
 }
 
-func NewClient(opt Options) *Client {
-	s := gocron.NewScheduler(time.UTC)
+func NewClient(opt Options) (*Client, error) {
+	s, err := gocron.NewScheduler()
+	if err != nil {
+		return nil, err
+	}
 	return &Client{
 		Options:   opt,
 		scheduler: s,
-	}
+	}, nil
 }
 
-func (c *Client) StartAsync() error {
-	var (
-		errFmt = "crontab.StartAsync error:%s"
-		tasks  []func() (*gocron.Job, error)
-	)
-
-	tasks = append(tasks, c.registerPrintTask)
-
-	for _, task := range tasks {
-		if _, err := task(); err != nil {
-			return fmt.Errorf(errFmt, err)
+func (c *Client) Start() error {
+	val := reflect.ValueOf(c)
+	typ := val.Type()
+	taskType := reflect.TypeOf((*gocron.Job)(nil)).Elem()
+	errType := reflect.TypeOf((*error)(nil)).Elem()
+	for i := 0; i < typ.NumMethod(); i++ {
+		method := val.Method(i)
+		methodType := method.Type()
+		if methodType.NumOut() == 2 && methodType.Out(0).Implements(taskType) && methodType.Out(1).Implements(errType) {
+			results := method.Call(nil)
+			if len(results) == 2 {
+				if err, ok := results[1].Interface().(error); ok && err != nil {
+					return err
+				}
+			}
 		}
 	}
 
-	c.scheduler.StartAsync()
+	c.scheduler.Start()
 	return nil
 }
 
 func (c *Client) Stop() {
-	c.scheduler.Stop()
+	_ = c.scheduler.Shutdown()
 }
 
-func (c *Client) registerPrintTask() (*gocron.Job, error) {
-	return c.scheduler.Every("2m").Do(func() {
-		slog.Info("crontab")
-	})
+func (c *Client) RegisterPrintTask() (gocron.Job, error) {
+	return c.scheduler.NewJob(
+		gocron.DurationJob(time.Minute*2),
+		gocron.NewTask(func() {
+			slog.Info("crontab")
+		}),
+	)
 }
