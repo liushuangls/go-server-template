@@ -2,8 +2,9 @@ package xfile
 
 import (
 	"io"
-	"net/http"
 	"strings"
+
+	"github.com/gabriel-vasile/mimetype"
 )
 
 // GetFileMIME return file mime type: https://mimesniff.spec.whatwg.org/
@@ -26,7 +27,7 @@ func GetFileMIME(file io.ReadSeeker) (string, error) {
 		_, _ = file.Seek(0, 0)
 	}()
 
-	return http.DetectContentType(buffer[:n]), nil
+	return mimetype.Detect(buffer[:n]).String(), nil
 }
 
 func FileIsImage(file io.ReadSeeker) (bool, error) {
