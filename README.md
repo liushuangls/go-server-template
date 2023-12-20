@@ -2,6 +2,8 @@
 
 An easy to use, easy to maintenance template.
 
+This template layout reference: https://go.dev/doc/modules/layout
+
 # Use
 
 ```
