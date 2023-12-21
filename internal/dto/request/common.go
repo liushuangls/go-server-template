@@ -8,3 +8,8 @@ type IPInfo struct {
 	// City         string
 	// Isp          string
 }
+
+type ClientInfo struct {
+	AppName    string `json:"app_name" form:"app_name" binding:"required"`
+	AppVersion string `json:"app_version" form:"app_version"`
+}

@@ -11,6 +11,7 @@ var (
 	InvalidToken      = BadRequest(2000, "Invalid Token")
 	ExpiresToken      = BadRequest(2001, "Token Expires")
 	InvalidOAuthState = BadRequest(2002, "Invalid OAuth State")
+	IDTokenAlreadyUse = BadRequest(2003, "IDToken already use")
 )
 
 func NewInvalidParamsErr(msg string) *Error {

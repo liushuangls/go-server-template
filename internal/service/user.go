@@ -52,7 +52,7 @@ func (u *UserService) verifyAndDelOAuthState(ctx context.Context, nonce string) 
 	key := fmt.Sprintf("oauth2:%s", nonce)
 	_, err := u.Redis.Get(ctx, key).Int()
 	if err != nil {
-		if err == redis.Nil {
+		if errors.Is(err, redis.Nil) {
 			return false, nil
 		}
 		return false, err
@@ -198,4 +198,32 @@ func (u *UserService) registerByOAuth(ctx context.Context, idToken *xoauth2.IdTo
 		return nil, err
 	}
 	return user, nil
+}
+
+func (u *UserService) OAuthOneTap(ctx context.Context, ipInfo *request.IPInfo, req *request.OauthOneTapReq) (*response.UserLoginInfo, error) {
+	oauth, ok := u.OAuthClients.GetClient(useroauth.Platform(req.Platform))
+	if !ok {
+		return nil, ecode.InvalidParams.WithCause(fmt.Errorf("no oauth client appname:%s", req.AppName))
+	}
+
+	idToken, err := oauth.ParseIDToken(ctx, req.IDToken)
+	if err != nil {
+		return nil, err
+	}
+	// 防止重放攻击
+	if idToken.Nonce != "" {
+		key := fmt.Sprintf("OAuthOneTap:%s", idToken.Nonce)
+		n, _ := u.Redis.Get(ctx, key).Int()
+		if n > 0 {
+			return nil, ecode.IDTokenAlreadyUse
+		}
+		u.Redis.Set(ctx, key, 1, time.Hour)
+	}
+	//fmt.Printf("idToken: %+v\n", idToken)
+
+	loginInfo, err := u.oauthLoginOrRegister(ctx, idToken, ipInfo, req.Platform)
+	if err != nil {
+		return nil, err
+	}
+	return loginInfo, nil
 }
