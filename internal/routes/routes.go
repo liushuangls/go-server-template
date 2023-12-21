@@ -22,6 +22,7 @@ func NewEngine(conf *configs.Config) (*gin.Engine, error) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
+	_ = os.MkdirAll(conf.Log.FileDir, 0755)
 	ginPanicFile, err := os.OpenFile(
 		fmt.Sprintf("%s/gin_panic.log", conf.Log.FileDir),
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
