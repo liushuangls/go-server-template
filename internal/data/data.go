@@ -84,6 +84,10 @@ func NewRedisLimiter(rdb *redis.Client) *redis_rate.Limiter {
 }
 
 func (d *Data) warpError(err error) error {
+	if err == nil {
+		return nil
+	}
+
 	if ent.IsNotFound(err) {
 		return ecode.NotFound
 	}
