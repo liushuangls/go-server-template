@@ -1,7 +1,7 @@
 install:
 	go install github.com/google/wire/cmd/wire@latest
 	go install entgo.io/ent/cmd/ent@latest
-	go mod dowanload
+	go mod download
 
 run:
 	APP_MODE=local go run -tags=go_json cmd/app/main.go cmd/app/wire_gen.go
