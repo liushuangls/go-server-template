@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+
 	"github.com/liushuangls/go-server-template/pkg/ecode"
 )
 
@@ -78,7 +79,7 @@ func (j *JWT) GenerateToken(param ClaimsParam, duration time.Duration) (*Token, 
 func (j *JWT) ParseToken(input string) (*ClaimsParam, error) {
 	split := strings.Split(input, space)
 	if len(split) != 2 || split[0] != bearer {
-		return nil, ecode.InvalidToken
+		return nil, ecode.InvalidToken.WithCause(fmt.Errorf("format error for split"))
 	}
 	signedString := split[1]
 
@@ -86,16 +87,16 @@ func (j *JWT) ParseToken(input string) (*ClaimsParam, error) {
 		return j.secret, nil
 	})
 	if err != nil {
-		return nil, ecode.InvalidToken
+		return nil, ecode.InvalidToken.WithCause(fmt.Errorf("jwt parse err: %s", err))
 	}
 
 	claims, ok := token.Claims.(*customClaims)
 	if !(ok && token.Valid) {
-		return nil, ecode.InvalidToken
+		return nil, ecode.InvalidToken.WithCause(fmt.Errorf("jwt: token invalid"))
 	}
 
 	if time.Now().Unix() > claims.ExpiresAt.Unix() {
-		return nil, ecode.ExpiresToken
+		return nil, ecode.ExpiresToken.WithCause(fmt.Errorf("token expires"))
 	}
 
 	return &claims.ClaimsParam, nil
