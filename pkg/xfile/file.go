@@ -1,6 +1,8 @@
 package xfile
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"io"
 	"strings"
 
@@ -9,25 +11,23 @@ import (
 
 // GetFileMIME return file mime type: https://mimesniff.spec.whatwg.org/
 func GetFileMIME(file io.ReadSeeker) (string, error) {
-	// 确保从开头读取
-	_, err := file.Seek(0, 0)
+	mime, err := GetFileMIMEType(file)
 	if err != nil {
 		return "", err
 	}
+	return mime.String(), nil
+}
 
-	// 读取前512字节
-	buffer := make([]byte, 512)
+func GetFileMIMEType(file io.ReadSeeker) (*mimetype.MIME, error) {
+	defer file.Seek(0, 0)
+
+	buffer := make([]byte, 1024*10)
 	n, err := file.Read(buffer)
 	if err != nil && err != io.EOF {
-		return "", err
+		return nil, err
 	}
 
-	// 读取完成后重置数据
-	defer func() {
-		_, _ = file.Seek(0, 0)
-	}()
-
-	return mimetype.Detect(buffer[:n]).String(), nil
+	return mimetype.Detect(buffer[:n]), nil
 }
 
 func FileIsImage(file io.ReadSeeker) (bool, error) {
@@ -40,4 +40,16 @@ func FileIsImage(file io.ReadSeeker) (bool, error) {
 
 func MIMEIsImage(mime string) bool {
 	return strings.HasPrefix(mime, "image/")
+}
+
+func CalcFileHexMD5(file io.ReadSeeker) (string, error) {
+	defer file.Seek(0, 0)
+
+	hash := md5.New()
+	_, err := io.Copy(hash, file)
+	if err != nil {
+		return "", err
+	}
+
+	return hex.EncodeToString(hash.Sum(nil)), nil
 }
