@@ -26,8 +26,8 @@ type Config struct {
 }
 
 type Token struct {
-	Token    string
-	ExpireAt int64
+	Token    string `json:"token"`
+	ExpireAt int64  `json:"expire_at"`
 }
 
 type customClaims struct {
