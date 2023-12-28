@@ -10,46 +10,56 @@ import (
 )
 
 type OauthClients struct {
-	Google    xoauth2.Client
-	Microsoft xoauth2.Client
-	Apple     xoauth2.Client
+	Google    map[string]xoauth2.Client
+	Microsoft map[string]xoauth2.Client
+	Apple     map[string]xoauth2.Client
 }
 
 func NewOauthClients(ctx context.Context, conf *configs.Config) (*OauthClients, error) {
-	var (
-		err     error
-		clients = &OauthClients{}
-	)
-	if conf.OAuth2.Google.ClientID != "" {
-		clients.Google, err = xoauth2.NewGoogleClient(ctx, conf.OAuth2.Google)
+	clients := &OauthClients{
+		Google:    make(map[string]xoauth2.Client),
+		Microsoft: make(map[string]xoauth2.Client),
+		Apple:     make(map[string]xoauth2.Client),
+	}
+
+	for _, c := range conf.OAuth2.Google {
+		cli, err := xoauth2.NewGoogleClient(ctx, c)
 		if err != nil {
 			return nil, ecode.WithCaller(err)
 		}
+		clients.Google[c.ClientType] = cli
 	}
-	if conf.OAuth2.Microsoft.ClientID != "" {
-		clients.Microsoft, err = xoauth2.NewGoogleClient(ctx, conf.OAuth2.Microsoft)
+
+	for _, c := range conf.OAuth2.Microsoft {
+		cli, err := xoauth2.NewMicrosoftClient(ctx, c)
 		if err != nil {
 			return nil, ecode.WithCaller(err)
 		}
+		clients.Microsoft[c.ClientType] = cli
 	}
-	if conf.OAuth2.Apple.ClientID != "" {
-		clients.Apple, err = xoauth2.NewGoogleClient(ctx, conf.OAuth2.Apple)
+
+	for _, c := range conf.OAuth2.Apple {
+		cli, err := xoauth2.NewAppleClient(ctx, c)
 		if err != nil {
 			return nil, ecode.WithCaller(err)
 		}
+		clients.Apple[c.ClientType] = cli
 	}
+
 	return clients, nil
 }
 
-func (clients *OauthClients) GetClient(platform useroauth.Platform) (xoauth2.Client, bool) {
+func (clients *OauthClients) GetClient(platform useroauth.Platform, clientType string) (c xoauth2.Client,
+	ok bool) {
 	switch platform {
 	case useroauth.PlatformGoogle:
-		return clients.Google, true
+		c, ok = clients.Google[clientType]
 	case useroauth.PlatformApple:
-		return clients.Microsoft, true
+		c, ok = clients.Apple[clientType]
 	case useroauth.PlatformMicrosoft:
-		return clients.Microsoft, true
+		c, ok = clients.Microsoft[clientType], true
 	default:
 		return nil, false
 	}
+	return
 }

@@ -40,7 +40,7 @@ func (u *UserService) getAndSaveOAuthState(ctx context.Context) string {
 }
 
 func (u *UserService) GetOAuthCodeURL(ctx context.Context, req *request.OAuthCodeURLReq) (*response.OAuthCodeURLResp, error) {
-	oauth, ok := u.OAuthClients.GetClient(useroauth.Platform(req.Platform))
+	oauth, ok := u.OAuthClients.GetClient(useroauth.Platform(req.Platform), "web")
 	if !ok {
 		return nil, ecode.InvalidParams
 	}
@@ -62,7 +62,7 @@ func (u *UserService) verifyAndDelOAuthState(ctx context.Context, nonce string) 
 }
 
 func (u *UserService) OAuthCallback(ctx context.Context, ipInfo *request.IPInfo, req *request.OAuthCallbackReq) (*response.UserLoginInfo, error) {
-	oauth, ok := u.OAuthClients.GetClient(useroauth.Platform(req.Platform))
+	oauth, ok := u.OAuthClients.GetClient(useroauth.Platform(req.Platform), "web")
 	if !ok {
 		return nil, ecode.InvalidParams
 	}
@@ -201,7 +201,7 @@ func (u *UserService) registerByOAuth(ctx context.Context, idToken *xoauth2.IdTo
 }
 
 func (u *UserService) OAuthOneTap(ctx context.Context, ipInfo *request.IPInfo, req *request.OauthOneTapReq) (*response.UserLoginInfo, error) {
-	oauth, ok := u.OAuthClients.GetClient(useroauth.Platform(req.Platform))
+	oauth, ok := u.OAuthClients.GetClient(useroauth.Platform(req.Platform), "web")
 	if !ok {
 		return nil, ecode.InvalidParams.WithCause(fmt.Errorf("no oauth client appname:%s", req.AppName))
 	}

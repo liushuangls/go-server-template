@@ -51,9 +51,9 @@ type Jwt struct {
 }
 
 type OAuth2 struct {
-	Google    xoauth2.Config `yaml:"Google"`
-	Microsoft xoauth2.Config `yaml:"Microsoft"`
-	Apple     xoauth2.Config `yaml:"Apple"`
+	Google    []xoauth2.Config `yaml:"Google"`
+	Microsoft []xoauth2.Config `yaml:"Microsoft"`
+	Apple     []xoauth2.Config `yaml:"Apple"`
 }
 
 type HashID struct {

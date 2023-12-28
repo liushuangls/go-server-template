@@ -37,11 +37,11 @@ HashID:
 
 OAuth2:
   Google:
-    ClientID: "xxx"
-    Secret: "xxx"
-    RedirectURL: "xxx"
-    UseSecret: true
-    ClientType: web
+    - ClientID: "xxx"
+      Secret: "xxx"
+      RedirectURL: "xxx"
+      UseSecret: true
+      ClientType: web
 
 PublicOSS:
   Platform: aws
