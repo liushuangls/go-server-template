@@ -56,3 +56,18 @@ CREATE TABLE `server_logs` (
    KEY `code` (`code`),
    Key `path` (`path`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+create table app_configs (
+     id bigint not null auto_increment primary key,
+     `create_time` datetime NOT NULL,
+     `update_time` datetime NOT NULL,
+     `delete_time` datetime DEFAULT NULL,
+     `key` varchar(64) not null,
+     `value` text,
+     value_type varchar(32) not null default 'string',
+     `type` varchar(32) not null default 'client',
+     `app_name` varchar(64) default '',
+     app_version_gte varchar(64) default '',
+     app_version_lte varchar(64) default '',
+     unique key_app (`key`, `app_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
