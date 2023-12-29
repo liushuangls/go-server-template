@@ -1,6 +1,7 @@
 package crontab
 
 import (
+	"context"
 	"log/slog"
 	"reflect"
 	"time"
@@ -64,6 +65,17 @@ func (c *Client) RegisterLogDBSyncTask() (gocron.Job, error) {
 		gocron.DurationJob(time.Minute*2),
 		gocron.NewTask(func() {
 			_ = c.LogDBSync.Sync()
+		}),
+	)
+}
+
+func (c *Client) RegisterLoadServerConfTask() (gocron.Job, error) {
+	return c.scheduler.NewJob(
+		gocron.DurationJob(time.Minute*5),
+		gocron.NewTask(func() {
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+			defer cancel()
+			_ = c.ServerConf.LoadConf(ctx)
 		}),
 	)
 }

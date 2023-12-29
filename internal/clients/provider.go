@@ -7,6 +7,7 @@ import (
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/internal/clients/logdbsync"
 	"github.com/liushuangls/go-server-template/internal/clients/publicoss"
+	"github.com/liushuangls/go-server-template/internal/clients/serverconf"
 )
 
 var ProviderSet = wire.NewSet(
@@ -15,6 +16,7 @@ var ProviderSet = wire.NewSet(
 	NewIp2Location,
 	NewHashID,
 	logdbsync.NewClient,
+	serverconf.NewServerConf,
 )
 
 func NewIp2Location(conf *configs.Config) (*ip2location.DB, error) {

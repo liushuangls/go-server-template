@@ -4,6 +4,7 @@ import (
 	"github.com/google/wire"
 
 	"github.com/liushuangls/go-server-template/internal/clients/logdbsync"
+	"github.com/liushuangls/go-server-template/internal/clients/serverconf"
 )
 
 var ProviderSet = wire.NewSet(
@@ -12,5 +13,6 @@ var ProviderSet = wire.NewSet(
 )
 
 type Options struct {
-	LogDBSync *logdbsync.Client
+	LogDBSync  *logdbsync.Client
+	ServerConf *serverconf.ServerConf
 }
