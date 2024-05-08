@@ -15,7 +15,7 @@ gonew github.com/liushuangls/go-server-template your.domain/myprog
 // run
 cd myprog
 
-cp configs/test.yaml configs/local.yaml
+cp configs/example.yaml configs/local.yaml
 
 make install
 
