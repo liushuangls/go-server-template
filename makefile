@@ -7,7 +7,7 @@ run:
 	APP_MODE=local go run -tags=go_json cmd/app/main.go cmd/app/wire_gen.go
 
 generate:
-	go generate ./internal/data/ent
+	go generate ./internal/data
 	wire gen cmd/app/wire.go
 
 build: generate

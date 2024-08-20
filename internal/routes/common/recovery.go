@@ -1,7 +1,7 @@
 package common
 
 import (
-	"fmt"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -14,11 +14,18 @@ func HandleRecovery(c *gin.Context, err any) {
 		HttpCode: 500,
 		Message:  "Internal Server Error",
 	}
-	go saveServerLog(c, fmt.Errorf("panic error: %+v", err), ec)
-	c.JSON(ec.HttpCode, &Resp{
+	resp := &Resp{
 		Code:    ec.Code,
 		Message: ec.Message,
 		Data:    nil,
-	})
+	}
+
+	path := c.Request.URL.Path
+	if strings.Contains(path, "/chat/completions") {
+		c.SSEvent("", resp)
+	} else {
+		c.JSON(ec.HttpCode, resp)
+	}
+
 	c.Abort()
 }

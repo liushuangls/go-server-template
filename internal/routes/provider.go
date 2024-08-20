@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis_rate/v10"
 	"github.com/google/wire"
-	"github.com/ip2location/ip2location-go/v9"
+	"github.com/oschwald/maxminddb-golang"
 
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/internal/clients"
@@ -24,7 +24,7 @@ type Options struct {
 	Router  *gin.Engine
 	Conf    *configs.Config
 	Limiter *redis_rate.Limiter
-	IPDB    *ip2location.DB
+	IPDB    *maxminddb.Reader
 	HashID  *clients.HashID
 
 	ServerLogRepo *data.ServerLogRepo

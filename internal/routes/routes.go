@@ -37,7 +37,6 @@ func NewEngine(conf *configs.Config) (*gin.Engine, error) {
 	_ = r.SetTrustedProxies(nil)
 	r.Use(
 		gin.Logger(),
-		//gin.Recovery(),
 		gin.CustomRecoveryWithWriter(io.MultiWriter(os.Stdout, ginPanicFile), common.HandleRecovery),
 		middleware.Cors(true),
 	)

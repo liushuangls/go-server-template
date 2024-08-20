@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -61,6 +62,8 @@ func (a *App) Run() error {
 	if err := a.Cron.Start(); err != nil {
 		return err
 	}
+
+	fmt.Println("Server Started at", a.Http.Conf.App.Addr)
 
 	// 监控结束指令
 	quit := make(chan os.Signal)

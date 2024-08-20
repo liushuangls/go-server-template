@@ -1,7 +1,7 @@
 App:
   Addr: ":8082"
   Mode: release
-  IP2Location: "IP2LOCATION-LITE-DB11.BIN"
+  GeoLite2DB: "resources/bin/GeoLite2-Country.mmdb"
 
 DB:
   Dialect: mysql

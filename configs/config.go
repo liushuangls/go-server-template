@@ -25,9 +25,9 @@ type Config struct {
 }
 
 type App struct {
-	Addr        string `yaml:"Addr"`
-	Mode        string `yaml:"Mode"`
-	IP2Location string `yaml:"IP2Location"`
+	Addr       string `yaml:"Addr"`
+	Mode       string `yaml:"Mode"`
+	GeoLite2DB string `yaml:"GeoLite2DB"`
 }
 
 type DB struct {
