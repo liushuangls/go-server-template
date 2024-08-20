@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/liushuangls/go-server-template/internal/data/ent"
@@ -26,7 +27,7 @@ func (u *UserService) getJwtToken(user *ent.User) (*jwt.Token, error) {
 func (u *UserService) LoginWithEmail(ctx context.Context, req *request.EmailLoginReq) (*response.UserLoginInfo, error) {
 	user, err := u.UserRepo.FindByEmail(ctx, req.Email)
 	if err != nil {
-		if err == ecode.NotFound {
+		if errors.Is(err, ecode.NotFound) {
 			return nil, ecode.EmailOrPasswordErr
 		}
 		return nil, err

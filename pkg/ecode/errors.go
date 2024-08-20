@@ -10,6 +10,7 @@ const (
 	UnknownCode = -1
 	// UnknownHttpCode is unknown reason for error info.
 	UnknownHttpCode = 500
+	PanicCode       = -2
 )
 
 // Error is a status error.
