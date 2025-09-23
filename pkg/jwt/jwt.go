@@ -21,8 +21,8 @@ type ClaimsParam struct {
 }
 
 type Config struct {
-	Secret string `yaml:"Secret"`
-	Issuer string `yaml:"Issuer"`
+	Secret string `koanf:"Secret"`
+	Issuer string `koanf:"Issuer"`
 }
 
 type Token struct {

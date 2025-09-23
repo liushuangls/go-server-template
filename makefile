@@ -4,7 +4,7 @@ install:
 	go mod download
 
 run:
-	APP_MODE=local go run -tags=go_json cmd/app/main.go cmd/app/wire_gen.go
+	APP_MODE=local go run cmd/app/main.go cmd/app/wire_gen.go
 
 generate:
 	go generate ./internal/data
@@ -12,4 +12,4 @@ generate:
 
 build: generate
 	go mod tidy -v
-	go build -tags=go_json -o=output/server cmd/app/main.go cmd/app/wire_gen.go
+	go build -o=output/server cmd/app/main.go cmd/app/wire_gen.go

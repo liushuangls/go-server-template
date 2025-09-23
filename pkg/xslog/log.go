@@ -6,13 +6,13 @@ import (
 )
 
 type Config struct {
-	FileDir    string `yaml:"FileDir"`
-	MaxSize    int    `yaml:"MaxSize"`
-	MaxBackups int    `yaml:"MaxBackups"`
-	MaxAge     int    `yaml:"MaxAge"`
-	Compress   bool   `yaml:"Compress"`
-	LocalTime  bool   `yaml:"LocalTime"`
-	AddSource  bool   `yaml:"AddSource"`
+	FileDir    string `koanf:"FileDir"`
+	MaxSize    int    `koanf:"MaxSize"`
+	MaxBackups int    `koanf:"MaxBackups"`
+	MaxAge     int    `koanf:"MaxAge"`
+	Compress   bool   `koanf:"Compress"`
+	LocalTime  bool   `koanf:"LocalTime"`
+	AddSource  bool   `koanf:"AddSource"`
 
 	Level        slog.Level
 	ExtraWriters []ExtraWriter

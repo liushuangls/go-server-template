@@ -3,44 +3,46 @@ package configs
 import (
 	"fmt"
 	"os"
-	"strings"
 
-	"github.com/spf13/viper"
+	"github.com/knadh/koanf/parsers/yaml"
+	"github.com/knadh/koanf/providers/env/v2"
+	"github.com/knadh/koanf/providers/file"
+	"github.com/knadh/koanf/v2"
 
 	"github.com/liushuangls/go-server-template/pkg/xslog"
 )
 
 type Config struct {
-	App   App          `yaml:"App"`
-	DB    DB           `yaml:"DB"`
-	Redis Redis        `yaml:"Redis"`
-	Log   xslog.Config `yaml:"Log"`
-	Jwt   Jwt          `yaml:"Jwt"`
+	App   App          `koanf:"App"`
+	DB    DB           `koanf:"DB"`
+	Redis Redis        `koanf:"Redis"`
+	Log   xslog.Config `koanf:"Log"`
+	Jwt   Jwt          `koanf:"Jwt"`
 }
 
 type App struct {
-	Addr string `yaml:"Addr"`
-	Mode string `yaml:"Mode"`
+	Addr string `koanf:"Addr"`
+	Mode string `koanf:"Mode"`
 }
 
 type DB struct {
-	Dialect     string `yaml:"Dialect"`
-	DSN         string `yaml:"DSN"`
-	MaxIdle     int    `yaml:"MaxIdle"`
-	MaxActive   int    `yaml:"MaxActive"`
-	MaxLifetime int    `yaml:"MaxLifetime"`
-	AutoMigrate bool   `yaml:"AutoMigrate"`
+	Dialect     string `koanf:"Dialect"`
+	DSN         string `koanf:"DSN"`
+	MaxIdle     int    `koanf:"MaxIdle"`
+	MaxActive   int    `koanf:"MaxActive"`
+	MaxLifetime int    `koanf:"MaxLifetime"`
+	AutoMigrate bool   `koanf:"AutoMigrate"`
 }
 
 type Redis struct {
-	Addr     string `yaml:"Addr"`
-	DB       int    `yaml:"DB"`
-	Password string `yaml:"Password"`
+	Addr     string `koanf:"Addr"`
+	DB       int    `koanf:"DB"`
+	Password string `koanf:"Password"`
 }
 
 type Jwt struct {
-	Secret string `yaml:"Secret"`
-	Issuer string `yaml:"Issuer"`
+	Secret string `koanf:"Secret"`
+	Issuer string `koanf:"Issuer"`
 }
 
 func (c *Config) IsDebugMode() bool {
@@ -52,26 +54,36 @@ func (c *Config) IsReleaseMode() bool {
 }
 
 func InitConfig() (*Config, error) {
-	var cfg Config
+	var (
+		cfg Config
+		err error
+		k   = koanf.New(".")
+	)
 	mode := os.Getenv("APP_MODE")
 	if mode == "" {
 		mode = "prod"
 	}
 	configPath := fmt.Sprintf("configs/%s.yaml", mode)
-	file, err := os.Open(configPath)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
 
-	viper.SetConfigType("yaml")
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	viper.AutomaticEnv()
-	if err := viper.ReadConfig(file); err != nil {
-		return nil, err
+	err = k.Load(file.Provider(configPath), yaml.Parser())
+	if err != nil {
+		return nil, fmt.Errorf("error loading file config: %v", err)
 	}
-	if err := viper.UnmarshalExact(&cfg); err != nil {
-		return nil, err
+
+	err = k.Load(env.Provider("_", env.Opt{
+		Prefix: "",
+		TransformFunc: func(k, v string) (string, any) {
+			return k, v
+		},
+	}), nil)
+	if err != nil {
+		return nil, fmt.Errorf("error loading env config: %v", err)
 	}
-	return &cfg, err
+
+	err = k.Unmarshal("", &cfg)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshal config: %v", err)
+	}
+
+	return &cfg, nil
 }

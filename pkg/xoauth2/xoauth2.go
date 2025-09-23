@@ -14,14 +14,14 @@ type Client interface {
 }
 
 type Config struct {
-	ClientID    string `yaml:"ClientID"`
-	Secret      string `yaml:"Secret"`
-	RedirectURL string `yaml:"RedirectURL"`
-	UseSecret   bool   `yaml:"UseSecret"`
-	ClientType  string `yaml:"ClientType"`
-	TenantID    string `yaml:"TenantID"`
-	TeamID      string `yaml:"TeamID"`
-	KeyID       string `yaml:"KeyID"`
+	ClientID    string `koanf:"ClientID"`
+	Secret      string `koanf:"Secret"`
+	RedirectURL string `koanf:"RedirectURL"`
+	UseSecret   bool   `koanf:"UseSecret"`
+	ClientType  string `koanf:"ClientType"`
+	TenantID    string `koanf:"TenantID"`
+	TeamID      string `koanf:"TeamID"`
+	KeyID       string `koanf:"KeyID"`
 }
 
 // IdToken is an OpenID Connect extension that provides a predictable representation

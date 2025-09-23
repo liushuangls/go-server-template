@@ -7,11 +7,11 @@ import (
 )
 
 type Config struct {
-	Dialect     string `yaml:"Dialect"`
-	DSN         string `yaml:"DSN"`
-	MaxIdle     int    `yaml:"MaxIdle"`
-	MaxActive   int    `yaml:"MaxActive"`
-	MaxLifetime int    `yaml:"MaxLifetime"`
+	Dialect     string `koanf:"Dialect"`
+	DSN         string `koanf:"DSN"`
+	MaxIdle     int    `koanf:"MaxIdle"`
+	MaxActive   int    `koanf:"MaxActive"`
+	MaxLifetime int    `koanf:"MaxLifetime"`
 }
 
 func NewDriver(c *Config) (*sql.Driver, error) {
