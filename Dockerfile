@@ -1,5 +1,5 @@
 ## Build
-FROM golang:1.21-buster AS build
+FROM golang:1.25-bookworm AS build
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ RUN go mod download
 RUN make build
 
 ## Deploy
-FROM gcr.io/distroless/base-debian11
+FROM gcr.io/distroless/base-debian12
 
 WORKDIR /
 
