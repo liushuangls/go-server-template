@@ -1,11 +1,10 @@
 package common
 
 import (
-	"errors"
 	"log/slog"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 
 	"github.com/liushuangls/go-server-template/pkg/ecode"
 )
@@ -39,30 +38,12 @@ func NewResp(data interface{}, err error) (int, *Resp) {
 	}
 }
 
-func ErrorResp(c *gin.Context, err error) {
-	c.JSON(NewResp(nil, err))
-	c.Abort()
-}
-
-func ParamsErrorResp(c *gin.Context, err error) {
-	var errs *ecode.Error
-	if errors.As(err, &errs) {
-		ErrorResp(c, errs)
-		return
-	}
-	ErrorResp(c, ecode.NewInvalidParamsErr(translateErr(err)))
-}
-
-func SuccessResp(c *gin.Context, data any) {
-	c.JSON(NewResp(data, nil))
-}
-
-func WrapResp(c *gin.Context) func(data any, err error) {
-	return func(data any, err error) {
+func WrapResp(c echo.Context) func(data any, err error) error {
+	return func(data any, err error) error {
 		if err != nil {
-			ErrorResp(c, err)
-		} else {
-			SuccessResp(c, data)
+			return err
 		}
+
+		return c.JSON(NewResp(data, nil))
 	}
 }

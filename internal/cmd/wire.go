@@ -10,7 +10,6 @@ import (
 
 var ProviderSet = wire.NewSet(
 	wire.Struct(new(Options), "*"),
-	NewJwt,
 	NewApp,
 )
 

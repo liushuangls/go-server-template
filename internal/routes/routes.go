@@ -2,40 +2,44 @@ package routes
 
 import (
 	"errors"
-	"io"
+	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
-	"os"
 	"reflect"
 
-	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis_rate/v10"
+	"github.com/labstack/echo/v4"
+	echoMiddleware "github.com/labstack/echo/v4/middleware"
 
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/internal/routes/common"
 	"github.com/liushuangls/go-server-template/internal/routes/middleware"
 )
 
-func NewEngine(conf *configs.Config) (*gin.Engine, error) {
-	if conf.IsReleaseMode() {
-		gin.SetMode(gin.ReleaseMode)
+func NewEcho(conf *configs.Config) (*echo.Echo, error) {
+	e := echo.New()
+
+	if conf.IsDebugMode() {
+		e.Debug = true
+		slog.Info("debug mode enabled")
 	}
 
-	_ = os.Mkdir("./log", 0755)
-	ginPanicFile, err := os.OpenFile("./log/gin_panic.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	cb, err := common.NewCustomBinder()
 	if err != nil {
 		return nil, err
 	}
+	e.Binder = cb
 
-	r := gin.New()
-	r.TrustedPlatform = "X-Real-IP"
-	_ = r.SetTrustedProxies(nil)
-	r.Use(
-		gin.Logger(),
-		gin.CustomRecoveryWithWriter(io.MultiWriter(os.Stdout, ginPanicFile), common.HandleRecovery),
-		middleware.Cors(true),
+	e.HTTPErrorHandler = common.EchoErrorHandler
+
+	e.Use(
+		echoMiddleware.Logger(),
+		echoMiddleware.Recover(),
+		//echoMiddleware.CORS(),
 	)
-	return r, nil
+
+	return e, nil
 }
 
 type HttpEngine struct {
@@ -43,7 +47,7 @@ type HttpEngine struct {
 }
 
 type Registrable interface {
-	RegisterRoute(*gin.RouterGroup)
+	RegisterRoute(group *echo.Group)
 }
 
 func NewHttpEngine(opt Options) *HttpEngine {
@@ -51,28 +55,46 @@ func NewHttpEngine(opt Options) *HttpEngine {
 }
 
 func (h *HttpEngine) RegisterRoute() {
-	r := h.Router.Group("")
-	r.Use(middleware.RateLimitWithIP(h.Limiter, redis_rate.PerMinute(60), "total"))
+	g := h.Router.Group("")
+	g.Use(
+		middleware.RateLimitWithIP(h.Limiter, redis_rate.PerMinute(60), "total"),
+	)
 
 	v := reflect.ValueOf(h.Options)
 	for i := 0; i < v.NumField(); i++ {
 		if router, ok := v.Field(i).Interface().(Registrable); ok {
-			router.RegisterRoute(r)
+			router.RegisterRoute(g)
 		}
 	}
+
+	printRoutes(h.Router)
+}
+
+func printRoutes(e *echo.Echo) {
+	fmt.Println("==== Registered Routes ====")
+	for _, r := range e.Routes() {
+		if r.Path == "/" || r.Path == "/*" {
+			continue
+		}
+		// r.Name 是 handler 的函数名，视情况打印
+		fmt.Printf("%-6s %-30s -> %s\n", r.Method, r.Path, r.Name)
+	}
+	fmt.Println("===========================")
 }
 
 func (h *HttpEngine) Run() (*http.Server, error) {
 	h.RegisterRoute()
+
 	srv := &http.Server{
 		Addr:    h.Conf.App.Addr,
 		Handler: h.Router,
 	}
 
 	go func() {
-		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("listen: %s\n", err)
+		if err := srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+			log.Fatal(err)
 		}
 	}()
+
 	return srv, nil
 }

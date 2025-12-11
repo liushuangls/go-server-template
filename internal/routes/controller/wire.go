@@ -1,4 +1,4 @@
-package v1
+package controller
 
 import (
 	"github.com/bsm/redislock"
@@ -11,5 +11,5 @@ type Options struct {
 	Limiter *redis_rate.Limiter
 	Locker  *redislock.Client
 
-	UserService *service.UserService
+	HealthService *service.HealthService
 }

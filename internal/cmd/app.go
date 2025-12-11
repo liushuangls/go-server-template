@@ -11,8 +11,6 @@ import (
 
 	"github.com/sourcegraph/conc"
 
-	"github.com/liushuangls/go-server-template/configs"
-	"github.com/liushuangls/go-server-template/pkg/jwt"
 	"github.com/liushuangls/go-server-template/pkg/xslog"
 )
 
@@ -40,10 +38,6 @@ func (a *App) setDefaultSlog() {
 	a.Config.Log.ExtraWriters = extraWriters
 	fileLogger := xslog.NewFileSlog(&a.Config.Log)
 	slog.SetDefault(fileLogger)
-}
-
-func NewJwt(conf *configs.Config) (*jwt.JWT, error) {
-	return jwt.NewJWT(&jwt.Config{Issuer: conf.Jwt.Issuer, Secret: conf.Jwt.Secret})
 }
 
 func (a *App) Run() error {
