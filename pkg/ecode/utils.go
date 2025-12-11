@@ -24,7 +24,14 @@ func WithCallerAndSkip(err error, skip int) error {
 }
 
 func JoinStr(err error, msg string) error {
-	if eErr := FromError(err); eErr != nil && eErr.Code != UnknownCode {
+	if err == nil {
+		return nil
+	}
+	if eErr := FromError(err); eErr != nil {
+		if eErr.cause != nil {
+			eErr.cause = errors.Join(eErr.cause, err)
+			return eErr
+		}
 		return eErr.WithCause(errors.New(msg))
 	}
 	return errors.Join(err, errors.New(msg))
