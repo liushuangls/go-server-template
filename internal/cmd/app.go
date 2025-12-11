@@ -10,8 +10,6 @@ import (
 	"time"
 
 	"github.com/sourcegraph/conc"
-
-	"github.com/liushuangls/go-server-template/pkg/xslog"
 )
 
 type App struct {
@@ -20,24 +18,7 @@ type App struct {
 
 func NewApp(opt Options) *App {
 	app := &App{opt}
-	app.setDefaultSlog()
 	return app
-}
-
-func (a *App) setDefaultSlog() {
-	var extraWriters []xslog.ExtraWriter
-
-	if a.Config.IsDebugMode() {
-		a.Config.Log.Level = slog.LevelDebug
-		extraWriters = append(extraWriters, xslog.ExtraWriter{
-			Writer: os.Stdout,
-			Level:  slog.LevelDebug,
-		})
-	}
-
-	a.Config.Log.ExtraWriters = extraWriters
-	fileLogger := xslog.NewFileSlog(&a.Config.Log)
-	slog.SetDefault(fileLogger)
 }
 
 func (a *App) Run() error {

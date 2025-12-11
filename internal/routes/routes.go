@@ -11,18 +11,18 @@ import (
 	"github.com/go-redis/redis_rate/v10"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
+	slogecho "github.com/samber/slog-echo"
 
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/internal/routes/common"
 	"github.com/liushuangls/go-server-template/internal/routes/middleware"
 )
 
-func NewEcho(conf *configs.Config) (*echo.Echo, error) {
+func NewEcho(conf *configs.Config, logger *slog.Logger) (*echo.Echo, error) {
 	e := echo.New()
 
 	if conf.IsDebugMode() {
 		e.Debug = true
-		slog.Info("debug mode enabled")
 	}
 
 	cb, err := common.NewCustomBinder()
@@ -34,9 +34,9 @@ func NewEcho(conf *configs.Config) (*echo.Echo, error) {
 	e.HTTPErrorHandler = common.EchoErrorHandler
 
 	e.Use(
-		echoMiddleware.Logger(),
+		slogecho.New(logger),
 		echoMiddleware.Recover(),
-		//echoMiddleware.CORS(),
+		echoMiddleware.CORS(),
 	)
 
 	return e, nil

@@ -11,6 +11,7 @@ import (
 var ProviderSet = wire.NewSet(
 	wire.Struct(new(Options), "*"),
 	NewApp,
+	NewDefaultSlog,
 )
 
 type Options struct {
