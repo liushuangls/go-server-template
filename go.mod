@@ -18,7 +18,7 @@ require (
 	github.com/knadh/koanf/providers/env/v2 v2.0.0
 	github.com/knadh/koanf/providers/file v1.2.0
 	github.com/knadh/koanf/v2 v2.3.0
-	github.com/labstack/echo/v4 v4.13.4
+	github.com/labstack/echo/v4 v4.14.0
 	github.com/redis/go-redis/v9 v9.17.2
 	github.com/samber/slog-echo v1.18.0
 	github.com/sourcegraph/conc v0.3.0
