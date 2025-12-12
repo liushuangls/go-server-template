@@ -34,8 +34,8 @@ func NewEcho(conf *configs.Config, logger *slog.Logger) (*echo.Echo, error) {
 	e.HTTPErrorHandler = common.EchoErrorHandler
 
 	e.Use(
-		slogecho.New(logger),
 		echoMiddleware.Recover(),
+		slogecho.New(logger),
 		echoMiddleware.CORS(),
 	)
 
