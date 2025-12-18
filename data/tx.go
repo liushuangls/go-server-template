@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log/slog"
 
-	ent2 "github.com/liushuangls/go-server-template/data/ent"
+	"github.com/liushuangls/go-server-template/data/ent"
 )
 
-func withTx(ctx context.Context, db *ent2.Client, fn func(tx *ent2.Tx) error) error {
+func withTx(ctx context.Context, db *ent.Client, fn func(tx *ent.Tx) error) error {
 	tx, err := db.Tx(ctx)
 	if err != nil {
 		return err
