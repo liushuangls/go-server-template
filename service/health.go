@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/liushuangls/go-server-template/internal/dto/request"
-	"github.com/liushuangls/go-server-template/internal/dto/response"
+	"github.com/liushuangls/go-server-template/dto/request"
+	"github.com/liushuangls/go-server-template/dto/response"
 )
 
 type HealthService struct {

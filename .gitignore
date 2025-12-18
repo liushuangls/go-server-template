@@ -21,6 +21,6 @@ log
 output/
 
 configs/local.yaml
-**/data/ent
-cmd/app/wire_gen.go
+data/ent
+wire_gen.go
 resources/bin

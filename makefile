@@ -4,11 +4,11 @@ install:
 	go mod download
 
 run:
-	APP_MODE=local go run cmd/app/main.go cmd/app/wire_gen.go
+	APP_MODE=local go run main.go wire_gen.go
 
 generate:
-	go generate ./internal/data
-	wire gen cmd/app/wire.go
+	go generate ./data
+	wire gen wire.go
 
 build: generate
 	go mod tidy -v

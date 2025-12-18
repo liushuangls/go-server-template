@@ -3,9 +3,9 @@ package data
 import (
 	"context"
 
-	"github.com/liushuangls/go-server-template/internal/data/ent"
-	"github.com/liushuangls/go-server-template/internal/data/ent/predicate"
-	userSchema "github.com/liushuangls/go-server-template/internal/data/ent/user"
+	"github.com/liushuangls/go-server-template/data/ent"
+	"github.com/liushuangls/go-server-template/data/ent/predicate"
+	userSchema "github.com/liushuangls/go-server-template/data/ent/user"
 )
 
 type UserRepo struct {

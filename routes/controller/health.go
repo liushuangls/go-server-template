@@ -3,8 +3,8 @@ package controller
 import (
 	"github.com/labstack/echo/v4"
 
-	"github.com/liushuangls/go-server-template/internal/dto/request"
-	"github.com/liushuangls/go-server-template/internal/routes/common"
+	"github.com/liushuangls/go-server-template/dto/request"
+	"github.com/liushuangls/go-server-template/routes/common"
 )
 
 type HealthRoute struct {

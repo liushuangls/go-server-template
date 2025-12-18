@@ -9,8 +9,8 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/liushuangls/go-server-template/configs"
-	"github.com/liushuangls/go-server-template/internal/data/ent"
-	"github.com/liushuangls/go-server-template/internal/data/ent/migrate"
+	ent2 "github.com/liushuangls/go-server-template/data/ent"
+	"github.com/liushuangls/go-server-template/data/ent/migrate"
 	"github.com/liushuangls/go-server-template/pkg/ecode"
 	"github.com/liushuangls/go-server-template/pkg/entutil"
 
@@ -18,11 +18,11 @@ import (
 )
 
 type Data struct {
-	db    *ent.Client
+	db    *ent2.Client
 	redis *redis.Client
 }
 
-func NewData(entClient *ent.Client, redisCli *redis.Client) (*Data, func(), error) {
+func NewData(entClient *ent2.Client, redisCli *redis.Client) (*Data, func(), error) {
 
 	d := &Data{
 		db:    entClient,
@@ -33,7 +33,7 @@ func NewData(entClient *ent.Client, redisCli *redis.Client) (*Data, func(), erro
 	}, nil
 }
 
-func NewEntClient(conf *configs.Config) (*ent.Client, error) {
+func NewEntClient(conf *configs.Config) (*ent2.Client, error) {
 	var (
 		drv dialect.Driver
 		err error
@@ -53,7 +53,7 @@ func NewEntClient(conf *configs.Config) (*ent.Client, error) {
 		drv = entutil.Debug(drv)
 	}
 
-	client := ent.NewClient(ent.Driver(drv))
+	client := ent2.NewClient(ent2.Driver(drv))
 	if conf.DB.AutoMigrate {
 		if err := client.Schema.Create(context.Background(), migrate.WithForeignKeys(false)); err != nil {
 			return nil, ecode.WithCaller(err)
@@ -88,7 +88,7 @@ func (d *Data) warpError(err error) error {
 		return nil
 	}
 
-	if ent.IsNotFound(err) {
+	if ent2.IsNotFound(err) {
 		return ecode.NotFound
 	}
 	return ecode.WithCallerAndSkip(err, 2)

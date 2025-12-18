@@ -6,15 +6,15 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/liushuangls/go-server-template/configs"
-	v1 "github.com/liushuangls/go-server-template/internal/routes/controller"
+	"github.com/liushuangls/go-server-template/routes/controller"
 )
 
 var ProviderSet = wire.NewSet(
 	wire.Struct(new(Options), "*"),
-	wire.Struct(new(v1.Options), "*"),
+	wire.Struct(new(controller.Options), "*"),
 	NewEcho,
 	NewHttpEngine,
-	v1.NewHealthRoute,
+	controller.NewHealthRoute,
 )
 
 type Options struct {
@@ -22,5 +22,5 @@ type Options struct {
 	Conf    *configs.Config
 	Limiter *redis_rate.Limiter
 
-	Health *v1.HealthRoute
+	Health *controller.HealthRoute
 }

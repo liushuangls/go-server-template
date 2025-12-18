@@ -16,7 +16,10 @@ func EchoErrorHandler(err error, c echo.Context) {
 
 	var he *echo.HTTPError
 	if errors.As(err, &he) {
-		err = ecode.New(1000, he.Code, fmt.Sprintf("%v", he.Message))
+		eErr := ecode.FromError(he.Internal)
+		if eErr == nil || eErr.Code == ecode.UnknownCode {
+			err = ecode.New(1000, he.Code, fmt.Sprintf("%v", he.Message))
+		}
 	}
 
 	_ = c.JSON(NewResp(nil, err))

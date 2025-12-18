@@ -4,8 +4,8 @@ import (
 	"github.com/google/wire"
 
 	"github.com/liushuangls/go-server-template/configs"
-	"github.com/liushuangls/go-server-template/internal/crontab"
-	"github.com/liushuangls/go-server-template/internal/routes"
+	"github.com/liushuangls/go-server-template/crontab"
+	"github.com/liushuangls/go-server-template/routes"
 )
 
 var ProviderSet = wire.NewSet(

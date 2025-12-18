@@ -14,8 +14,8 @@ import (
 	slogecho "github.com/samber/slog-echo"
 
 	"github.com/liushuangls/go-server-template/configs"
-	"github.com/liushuangls/go-server-template/internal/routes/common"
-	"github.com/liushuangls/go-server-template/internal/routes/middleware"
+	"github.com/liushuangls/go-server-template/routes/common"
+	"github.com/liushuangls/go-server-template/routes/middleware"
 )
 
 func NewEcho(conf *configs.Config, logger *slog.Logger) (*echo.Echo, error) {
