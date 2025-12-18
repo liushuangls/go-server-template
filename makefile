@@ -12,4 +12,4 @@ generate:
 
 build: generate
 	go mod tidy -v
-	go build -o=output/server cmd/app/main.go cmd/app/wire_gen.go
+	go build -o=output/server main.go wire_gen.go
