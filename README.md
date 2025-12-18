@@ -17,7 +17,7 @@ cd myprog
 
 cp configs/example.yaml configs/local.yaml
 
-make install
+go mod download
 
 make generate
 
