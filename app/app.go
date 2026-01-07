@@ -35,7 +35,7 @@ func (a *App) Run() error {
 	fmt.Println("Server Started at", a.Http.Conf.App.Addr)
 
 	// 监控结束指令
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
