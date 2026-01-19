@@ -9,9 +9,8 @@ import (
 	"reflect"
 
 	"github.com/go-redis/redis_rate/v10"
-	"github.com/labstack/echo/v4"
-	echoMiddleware "github.com/labstack/echo/v4/middleware"
-	slogecho "github.com/samber/slog-echo"
+	"github.com/labstack/echo/v5"
+	echoMiddleware "github.com/labstack/echo/v5/middleware"
 
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/routes/common"
@@ -21,9 +20,7 @@ import (
 func NewEcho(conf *configs.Config, logger *slog.Logger) (*echo.Echo, error) {
 	e := echo.New()
 
-	if conf.IsDebugMode() {
-		e.Debug = true
-	}
+	e.Logger = logger
 
 	cb, err := common.NewCustomBinder()
 	if err != nil {
@@ -35,8 +32,8 @@ func NewEcho(conf *configs.Config, logger *slog.Logger) (*echo.Echo, error) {
 
 	e.Use(
 		echoMiddleware.Recover(),
-		slogecho.New(logger),
-		echoMiddleware.CORS(),
+		echoMiddleware.RequestLogger(),
+		echoMiddleware.CORS("*"),
 	)
 
 	return e, nil
@@ -72,7 +69,7 @@ func (h *HttpEngine) RegisterRoute() {
 
 func printRoutes(e *echo.Echo) {
 	fmt.Println("==== Registered Routes ====")
-	for _, r := range e.Routes() {
+	for _, r := range e.Router().Routes() {
 		if r.Path == "/" || r.Path == "/*" {
 			continue
 		}

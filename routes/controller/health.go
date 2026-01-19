@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 
 	"github.com/liushuangls/go-server-template/dto/request"
 	"github.com/liushuangls/go-server-template/routes/common"
@@ -19,7 +19,7 @@ func (u *HealthRoute) RegisterRoute(router *echo.Group) {
 	router.GET("/health", u.health)
 }
 
-func (u *HealthRoute) health(c echo.Context) error {
+func (u *HealthRoute) health(c *echo.Context) error {
 	var req request.HealthReq
 	if err := c.Bind(&req); err != nil {
 		return err

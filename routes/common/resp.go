@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 
 	"github.com/liushuangls/go-server-template/pkg/ecode"
 )
@@ -38,7 +38,7 @@ func NewResp(data interface{}, err error) (int, *Resp) {
 	}
 }
 
-func WrapResp(c echo.Context) func(data any, err error) error {
+func WrapResp(c *echo.Context) func(data any, err error) error {
 	return func(data any, err error) error {
 		if err != nil {
 			return err

@@ -8,7 +8,7 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	entranslations "github.com/go-playground/validator/v10/translations/en"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 
 	"github.com/liushuangls/go-server-template/pkg/ecode"
 )
@@ -18,6 +18,8 @@ type CustomBinder struct {
 	v       *validator.Validate
 	enTrans ut.Translator
 }
+
+var _ echo.Binder = (*CustomBinder)(nil)
 
 func NewCustomBinder() (*CustomBinder, error) {
 	cb := &CustomBinder{
@@ -39,14 +41,14 @@ func (cb *CustomBinder) initTrans() error {
 	return entranslations.RegisterDefaultTranslations(cb.v, cb.enTrans)
 }
 
-func (cb *CustomBinder) Bind(i any, c echo.Context) (err error) {
+func (cb *CustomBinder) Bind(c *echo.Context, target any) (err error) {
 	// 1. 先用默认逻辑做绑定（JSON / form / query / param 等）
-	if err = cb.b.Bind(i, c); err != nil {
+	if err = cb.b.Bind(c, target); err != nil {
 		return ecode.NewInvalidParamsErr("bind error: " + err.Error())
 	}
 
 	// 2. 用 go-playground/validator 做结构体校验
-	if err = cb.v.Struct(i); err != nil {
+	if err = cb.v.Struct(target); err != nil {
 		return ecode.NewInvalidParamsErr(cb.translateErr(err))
 	}
 

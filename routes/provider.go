@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/go-redis/redis_rate/v10"
 	"github.com/google/wire"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/routes/controller"

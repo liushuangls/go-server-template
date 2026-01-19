@@ -1,6 +1,8 @@
 package ecode
 
 var (
+	InternalServerErr = InternalServer(-1, "Internal Server Error")
+
 	InvalidParams  = NewInvalidParamsErr("Invalid Params")
 	NotFound       = NewInvalidParamsErr("Not Found")
 	TooManyRequest = BadRequest(1100, "Too Many Request")
