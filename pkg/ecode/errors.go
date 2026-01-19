@@ -44,6 +44,13 @@ func (e *Error) WithCause(cause error) *Error {
 	return newErr
 }
 
+// WithHttpCodeCause with the underlying cause of the error.
+func (e *Error) WithHttpCodeCause(httpCode int, cause error) *Error {
+	newErr := New(e.Code, httpCode, e.Message)
+	newErr.cause = cause
+	return newErr
+}
+
 // New returns an error object for the code, message.
 func New(code, httpCode int, message string) *Error {
 	return &Error{
