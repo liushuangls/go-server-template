@@ -21,14 +21,13 @@ func NewEcho(conf *configs.Config, logger *slog.Logger) (*echo.Echo, error) {
 	e := echo.New()
 
 	e.Logger = logger
+	e.HTTPErrorHandler = common.EchoErrorHandler
 
 	cb, err := common.NewCustomBinder()
 	if err != nil {
 		return nil, err
 	}
 	e.Binder = cb
-
-	e.HTTPErrorHandler = common.EchoErrorHandler
 
 	e.Use(
 		echoMiddleware.Recover(),
