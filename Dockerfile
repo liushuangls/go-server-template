@@ -5,7 +5,6 @@ WORKDIR /app
 
 COPY . ./
 
-RUN make install
 RUN go mod download
 RUN make build
 

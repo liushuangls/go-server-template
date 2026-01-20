@@ -28,8 +28,8 @@ make run
 
 - wire - injects dependencies
 - ent - database orm
-- gin - router
-- viper - config manager
+- echo - router
+- koanf - config manager
 - and so on...
     - jwt
     - ...
