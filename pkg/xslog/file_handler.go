@@ -62,17 +62,23 @@ func (f fileHandler) Handle(ctx context.Context, record slog.Record) error {
 }
 
 func (f fileHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
-	logger := f.loggers[f.level]
-	if logger == nil {
-		return nil
+	loggers := make(map[slog.Level]*slog.JSONHandler)
+	for l, h := range f.loggers {
+		loggers[l] = h.WithAttrs(attrs).(*slog.JSONHandler)
 	}
-	return logger.WithAttrs(attrs)
+	return &fileHandler{
+		level:   f.level,
+		loggers: loggers,
+	}
 }
 
 func (f fileHandler) WithGroup(name string) slog.Handler {
-	logger := f.loggers[f.level]
-	if logger == nil {
-		return nil
+	loggers := make(map[slog.Level]*slog.JSONHandler)
+	for l, h := range f.loggers {
+		loggers[l] = h.WithGroup(name).(*slog.JSONHandler)
 	}
-	return logger.WithGroup(name)
+	return &fileHandler{
+		level:   f.level,
+		loggers: loggers,
+	}
 }

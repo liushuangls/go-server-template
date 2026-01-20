@@ -15,7 +15,7 @@ func RateLimitWithIP(limiter *redis_rate.Limiter, limit redis_rate.Limit, prefix
 			key := fmt.Sprintf("%s:%s", prefix, c.RealIP())
 			result, err := limiter.Allow(c.Request().Context(), key, limit)
 			if err != nil || result.Allowed == 0 {
-				return ecode.TooManyRequest
+				return ecode.TooManyRequest.WithCause(err)
 			}
 			return next(c)
 		}
