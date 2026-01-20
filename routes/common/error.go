@@ -34,6 +34,8 @@ func EchoErrorHandler(c *echo.Context, err error) {
 		} else {
 			sErr = ecode.New(ecode.UnknownCode, code, http.StatusText(code)).WithCause(err)
 		}
+	} else {
+		sErr = ecode.InternalServerErr.WithCause(err)
 	}
 
 	_ = c.JSON(NewResp(nil, sErr))
