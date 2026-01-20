@@ -26,6 +26,7 @@ require (
 	github.com/redis/go-redis/v9 v9.17.2
 	github.com/reugn/go-quartz v0.15.2
 	github.com/sourcegraph/conc v0.3.0
+	github.com/stretchr/testify v1.11.1
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
@@ -68,4 +69,5 @@ require (
 	golang.org/x/tools v0.40.0 // indirect
 	golang.org/x/tools/go/packages/packagestest v0.1.1-deprecated // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
