@@ -44,7 +44,9 @@ func (a *App) Run() error {
 	defer cancel()
 
 	var wg conc.WaitGroup
-	wg.Go(a.Cron.Stop)
+	wg.Go(func() {
+		a.Cron.Stop(ctx)
+	})
 	wg.Go(func() {
 		if err := httpSrv.Shutdown(ctx); err != nil {
 			slog.Error("Server Shutdown", "err", err)

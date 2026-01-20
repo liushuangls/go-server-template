@@ -1,60 +1,64 @@
 package crontab
 
 import (
+	"context"
 	"log/slog"
 	"reflect"
 	"time"
 
-	"github.com/go-co-op/gocron/v2"
+	"github.com/reugn/go-quartz/job"
+	"github.com/reugn/go-quartz/logger"
+	"github.com/reugn/go-quartz/quartz"
+
+	"github.com/liushuangls/go-server-template/pkg/ecode"
 )
 
 type Client struct {
 	Options
-	scheduler gocron.Scheduler
+	scheduler quartz.Scheduler
 }
 
-func NewClient(opt Options) (*Client, error) {
-	s, err := gocron.NewScheduler()
+func NewClient(ctx context.Context, opt Options) (*Client, error) {
+	sched, err := quartz.NewStdScheduler(quartz.WithLogger(logger.NewSlogLogger(ctx, slog.Default())))
 	if err != nil {
-		return nil, err
+		return nil, ecode.WithCaller(err)
 	}
 	return &Client{
 		Options:   opt,
-		scheduler: s,
+		scheduler: sched,
 	}, nil
 }
 
 func (c *Client) Start() error {
 	val := reflect.ValueOf(c)
 	typ := val.Type()
-	taskType := reflect.TypeOf((*gocron.Job)(nil)).Elem()
-	errType := reflect.TypeOf((*error)(nil)).Elem()
+	output1 := reflect.TypeOf((*quartz.JobDetail)(nil))
+	output2 := reflect.TypeOf((*error)(nil)).Elem()
 	for i := 0; i < typ.NumMethod(); i++ {
 		method := val.Method(i)
 		methodType := method.Type()
-		if methodType.NumOut() == 2 && methodType.Out(0).Implements(taskType) && methodType.Out(1).Implements(errType) {
+		if methodType.NumOut() == 2 && methodType.Out(0).AssignableTo(output1) && methodType.Out(1).Implements(output2) {
 			results := method.Call(nil)
-			if len(results) == 2 {
-				if err, ok := results[1].Interface().(error); ok && err != nil {
-					return err
-				}
+			if err, ok := results[1].Interface().(error); ok && err != nil {
+				return err
 			}
 		}
 	}
 
-	c.scheduler.Start()
+	c.scheduler.Start(context.Background())
 	return nil
 }
 
-func (c *Client) Stop() {
-	_ = c.scheduler.Shutdown()
+func (c *Client) Stop(ctx context.Context) {
+	c.scheduler.Stop()
+	c.scheduler.Wait(ctx)
 }
 
-func (c *Client) RegisterPrintTask() (gocron.Job, error) {
-	return c.scheduler.NewJob(
-		gocron.DurationJob(time.Minute*2),
-		gocron.NewTask(func() {
-			slog.Info("crontab")
-		}),
-	)
+func (c *Client) RegisterPrintTask() (*quartz.JobDetail, error) {
+	detail := quartz.NewJobDetail(job.NewFunctionJob(func(ctx context.Context) (any, error) {
+		slog.Info("crontab.RegisterPrintTask")
+		return nil, nil
+	}), quartz.NewJobKey("print_task"))
+	err := c.scheduler.ScheduleJob(detail, quartz.NewSimpleTrigger(time.Minute))
+	return detail, err
 }
