@@ -29,7 +29,11 @@ func NewClient(ctx context.Context, opt Options) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) Start() error {
+func (c *Client) OnServerStart(ctx context.Context) error {
+	return c.Start(ctx)
+}
+
+func (c *Client) Start(ctx context.Context) error {
 	val := reflect.ValueOf(c)
 	typ := val.Type()
 	output1 := reflect.TypeOf((*quartz.JobDetail)(nil))
@@ -45,13 +49,18 @@ func (c *Client) Start() error {
 		}
 	}
 
-	c.scheduler.Start(context.Background())
+	c.scheduler.Start(ctx)
 	return nil
 }
 
 func (c *Client) Stop(ctx context.Context) {
 	c.scheduler.Stop()
 	c.scheduler.Wait(ctx)
+}
+
+func (c *Client) OnServerClose(ctx context.Context) error {
+	c.Stop(ctx)
+	return nil
 }
 
 func (c *Client) RegisterPrintTask() (*quartz.JobDetail, error) {
