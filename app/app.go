@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/sourcegraph/conc"
+	"golang.org/x/sync/errgroup"
 )
 
 type App struct {
@@ -22,8 +23,10 @@ func NewApp(opt Options) *App {
 }
 
 func (a *App) Run() error {
+	var g errgroup.Group
+
 	// start http server
-	httpSrv, err := a.Http.Run()
+	httpSrv, err := a.Http.Run(&g)
 	if err != nil {
 		return err
 	}
@@ -34,9 +37,22 @@ func (a *App) Run() error {
 
 	fmt.Println("Server Started at", a.Http.Conf.App.Addr)
 
-	// 监控结束指令
 	quit := make(chan os.Signal, 1)
+
+	// 监听中断信号
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	// 监控服务错误
+	go func() {
+		if err := g.Wait(); err != nil {
+			slog.Error("server run err", "err", err)
+			select {
+			case quit <- syscall.SIGTERM:
+			default:
+			}
+		}
+	}()
+
 	<-quit
 
 	// 停止服务

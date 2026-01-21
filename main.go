@@ -10,7 +10,11 @@ func main() {
 	defer cancel()
 
 	server, cleanup, err := app(ctx)
-	defer cleanup()
+	defer func() {
+		if cleanup != nil {
+			cleanup()
+		}
+	}()
 	if err != nil {
 		panic(err)
 	}

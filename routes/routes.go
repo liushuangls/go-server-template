@@ -3,7 +3,6 @@ package routes
 import (
 	"errors"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 	"reflect"
@@ -11,6 +10,7 @@ import (
 	"github.com/go-redis/redis_rate/v10"
 	"github.com/labstack/echo/v5"
 	echoMiddleware "github.com/labstack/echo/v5/middleware"
+	"golang.org/x/sync/errgroup"
 
 	"github.com/liushuangls/go-server-template/configs"
 	"github.com/liushuangls/go-server-template/routes/common"
@@ -78,7 +78,7 @@ func printRoutes(e *echo.Echo) {
 	fmt.Println("===========================")
 }
 
-func (h *HttpEngine) Run() (*http.Server, error) {
+func (h *HttpEngine) Run(g *errgroup.Group) (*http.Server, error) {
 	h.RegisterRoute()
 
 	srv := &http.Server{
@@ -86,11 +86,13 @@ func (h *HttpEngine) Run() (*http.Server, error) {
 		Handler: h.Router,
 	}
 
-	go func() {
-		if err := srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-			log.Fatal(err)
+	g.Go(func() error {
+		err := srv.ListenAndServe()
+		if errors.Is(err, http.ErrServerClosed) {
+			return nil
 		}
-	}()
+		return err
+	})
 
 	return srv, nil
 }
